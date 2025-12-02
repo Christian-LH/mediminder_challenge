@@ -1,0 +1,25 @@
+<div class="container mt-4" data-controller="multi-step">
+
+  <%= simple_form_for @profile do |f| %>
+
+    <!-- Step 1 - Gender pick -->
+    <div data-multi-step-target="genderStep" class="mb-3">
+      <div class="form-label">Geschlecht</div>
+      <div class="btn-group" role="group">
+        <%= f.collection_radio_buttons :gender, ['male', 'female'], :to_s, :capitalize do |b| %>
+          <%= b.label class: "btn btn-outline-primary" do %>
+            <%= b.radio_button(class: "d-none") %> <%= b.text %>
+          <% end %>
+        <% end %>
+      </div>
+      <button type="button" class="btn btn-primary mt-3" data-action="click->multi-step#nextStep">Next</button>
+    </div>
+
+    <!-- Step 2 - birthdate pick -->
+    <div data-multi-step-target="dateStep" class="d-none">
+      <%= f.input :date, as: :string, wrapper: :date, input_html: { value: I18n.l(f.object.date), class: "form-control" } %>
+      <%= f.submit "Get overview", class: "btn btn-success mt-3" %>
+    </div>
+
+  <% end %>
+</div>
