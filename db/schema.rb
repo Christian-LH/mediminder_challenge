@@ -65,5 +65,5 @@ ActiveRecord::Schema[7.1].define(version: 2025_12_02_132539) do
 
   add_foreign_key "profiles", "users"
   add_foreign_key "user_services", "services"
-  add_foreign_key "user_services", "users"
+  add_foreign_key "user_services", "profiles"
 end
