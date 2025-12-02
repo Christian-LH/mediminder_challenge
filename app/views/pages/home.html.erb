@@ -1,2 +1,64 @@
-<h1>Pages#home</h1>
-<p>Find me in app/views/pages/home.html.erb</p>
+<div class="container">
+   <!-- Hero Section -->
+  <section class="bg-light text-dark py-5">
+    <div class="container text-center">
+      <h1 class="display-4 fw-bold my-3">Welcome to MediMinder</h1>
+      <p class="lead mb-4">
+        Your personal guide to staying ahead of preventive checkups and vaccinations.
+      </p>
+      <!-- Button Link depends on User has Profile or not -->
+      <% if @user.profil.nil? %>
+        <%= link_to "Get started", root_path %>
+      <% else %>
+        <%= link_to "Your upcoming checkups", root_path %>
+      <% end %>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="py-5">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-8 text-center">
+
+          <h2 class="fw-bold mb-3">Why MediMinder?</h2>
+          <p class="lead mb-4">
+            MediMinder gives busy adults peace of mind by tracking preventive checkups and vaccinations automatically.
+            No more guessing, no more forgotten appointments — MediMinder combines your age, health guidelines, and public medical recommendations to deliver timely reminders exactly when you need them.
+          </p>
+          <p class="lead">
+            Stay healthy effortlessly. We keep you informed, organized, and always one step ahead.
+          </p>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Optional Features Icons -->
+  <section class="py-5 bg-light">
+    <div class="container">
+      <div class="row text-center g-4">
+
+        <div class="col-md-4">
+          <i class="bi bi-clock-fill fs-1 text-primary mb-2"></i>
+          <h5 class="fw-bold">Timely Reminders</h5>
+          <p>Never miss a checkup or vaccination with automatic alerts.</p>
+        </div>
+
+        <div class="col-md-4">
+          <i class="bi bi-person-badge-fill fs-1 text-primary mb-2"></i>
+          <h5 class="fw-bold">Personalized</h5>
+          <p>Customized suggestions based on your age and health profile.</p>
+        </div>
+
+        <div class="col-md-4">
+          <i class="bi bi-shield-check fs-1 text-primary mb-2"></i>
+          <h5 class="fw-bold">Peace of Mind</h5>
+          <p>Stay informed and healthy without worrying about missed appointments.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+</div>
