@@ -17,8 +17,8 @@
 
     <!-- Step 2 - birthdate pick -->
     <div data-multi-step-target="dateStep" class="d-none">
-      <%= f.input :date, as: :string, wrapper: :date, input_html: { value: I18n.l(f.object.date), class: "form-control" } %>
-      <%= f.submit "Get overview", class: "btn btn-success mt-3" %>
+      <!-- insert flatpickr here -->
+      <%= f.submit "Get overview", class: "btn btn-primary mt-3" %>
     </div>
 
   <% end %>
