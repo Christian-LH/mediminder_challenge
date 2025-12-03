@@ -8,9 +8,11 @@ class UserServicesController < ApplicationController
     #   @user_services = @user_services.services.where(sql_subquery, query: "%#{params[:query]}%")
     # end
 
+    @user_age = current_user.profile.age
+
     # add logic to only show services for current_profile (considering gender and age):
     @user_services = @user_services.joins(:service).where(services: { gender_restriction: current_user.profile.gender })
-                              .where("services.recommended_start_age <= ? AND services.recommended_end_age >= ?", current_user.profile.birthday, current_user.profile.birthday)
+                              .where("services.recommended_start_age <= ? AND services.recommended_end_age >= ?", @user_age, @user_age)
   end
 
   # def show

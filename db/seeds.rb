@@ -16,7 +16,7 @@ Service.destroy_all
 puts "Cleaned the database"
 
 puts "Creating seed data ..."
-service = Service.create(name: "Flu Shot", description: "the vacciantion against the influenza virus", gender_restriction: "male")
+service = Service.create(name: "Flu Shot", description: "the vacciantion against the influenza virus", gender_restriction: "male", recommended_start_age: 18, recommended_end_age: 65)
 
 puts "Created #{Service.count} services"
 
@@ -65,7 +65,10 @@ HEALTH_INSURANCE_PROVIDERS = [
   "UKV Union Krankenversicherung",
   "Württembergische Krankenversicherung"
 ]
+
+HealthInsurance.destroy_all
+
 HEALTH_INSURANCE_PROVIDERS.each do |name|
-  Healthinsurance.find_or_create_by!(name: name)
+  HealthInsurance.find_or_create_by!(name: name)
   puts " → #{name}"
 end
