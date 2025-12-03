@@ -38,11 +38,6 @@
             <h2><%= done_user_service.service.name %></h2>
             <p><%= done_user_service.completed_at %></p>
           </div>
-          <%= form_with url: user_services_path(done_user_service), method: :delete, local: true, html: { style: "display:inline" } do %>
-            <%= button_tag type: "submit", class: "btn px-2 mx-3", style: "background-color: rgba(255, 255, 255, 0.12); color: #b90000ff; border: none; border-radius: 6px;", data: { turbo_confirm: "Are you sure?" }, onclick: "event.stopPropagation();" do %>
-              <i class="fa-regular fa-trash-can px-1"></i>
-            <% end %>
-          <% end %>
         </div>
       <% end %>
     <% end %>
