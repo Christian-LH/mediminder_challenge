@@ -41,14 +41,14 @@ ActiveRecord::Schema[7.1].define(version: 2025_12_02_132539) do
 
   create_table "user_services", force: :cascade do |t|
     t.bigint "service_id", null: false
-    t.bigint "user_id", null: false
+    t.bigint "profile_id", null: false
     t.date "due_date"
     t.string "status"
-    t.datetime "completed_at"
+    t.date "completed_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["profile_id"], name: "index_user_services_on_profile_id"
     t.index ["service_id"], name: "index_user_services_on_service_id"
-    t.index ["user_id"], name: "index_user_services_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -64,6 +64,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_12_02_132539) do
   end
 
   add_foreign_key "profiles", "users"
-  add_foreign_key "user_services", "services"
   add_foreign_key "user_services", "profiles"
+  add_foreign_key "user_services", "services"
 end
