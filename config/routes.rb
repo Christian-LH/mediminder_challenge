@@ -12,7 +12,7 @@ Rails.application.routes.draw do
 
   # resources :users, only: [] do
   #   resources :profiles, only: [:new, :create, :show, :edit, :update] do
-      resources :user_services, only: [:index, :new, :create]
+      resources :user_services, only: [:index, :show, :new, :create, :edit, :update, :destroy]
   #   end
   # end
 end

@@ -16,14 +16,17 @@ Service.destroy_all
 puts "Cleaned the database"
 
 puts "Creating seed data ..."
-service = Service.create(name: "Flu Shot", description: "the vacciantion against the influenza virus", gender_restriction: "male", recommended_start_age: 18, recommended_end_age: 65)
+service1 = Service.create(name: "Flu Shot", description: "the vacciantion against the influenza virus", gender_restriction: "male", recommended_start_age: 18, recommended_end_age: 65)
+service2 = Service.create(name: "Prophylaxis", description: "deep cleaning of the teeth", gender_restriction: "male", recommended_start_age: 18, recommended_end_age: 65)
+
 
 puts "Created #{Service.count} services"
 
 puts "Creating a user with profile and user_service ..."
 user = User.create!(email: "bob@gmail.com", password: "Password123")
 profile = Profile.create!(user: user, gender: "male", birthday: Date.new(2002, 3, 7))
-user_service = UserService.create!(profile: profile, service: service, due_date: Date.today + 1.year, status: "done", completed_at: Date.today)
+user_service1 = UserService.create!(profile: profile, service: service1, due_date: Date.today + 1.year, status: "done", completed_at: Date.today)
+user_service2 = UserService.create!(profile: profile, service: service2, due_date: Date.today + 1.year, status: "undone", completed_at: Date.today)
 puts "Created #{User.count} users, #{Profile.count} profiles and #{UserService.count} user services"
 
 

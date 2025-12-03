@@ -1,12 +1,12 @@
 class UserServicesController < ApplicationController
-  # before_action :set_user_service, only: [:show, :edit, :update]
+  before_action :set_user_service, only: [:show, :edit, :update, :destroy]
 
   def index
     @user_services = UserService.all
 
     @user_age = current_user.profile.age
     @user_services = @user_services.joins(:service).where(services: { gender_restriction: current_user.profile.gender })
-    .where("services.recommended_start_age <= ? AND services.recommended_end_age >= ?", @user_age, @user_age)
+                                                    .where("services.recommended_start_age <= ? AND services.recommended_end_age >= ?", @user_age, @user_age)
 
     # Filtering with search query - to be implemented later:
       # if params[:query].present?
@@ -15,8 +15,8 @@ class UserServicesController < ApplicationController
       # end
   end
 
-  # def show
-  # end
+  def show
+  end
 
   # def new
   #   @user_service = UserService.new
@@ -25,15 +25,22 @@ class UserServicesController < ApplicationController
   # def create
   # end
 
-  # def edit
-  # end
+  def edit
+    @user_services = UserService.all
+  end
 
-  # def update
-  # end
+  def update
+  end
+
+  def destroy
+    @user_service.destroy
+    redirect_to user_service_path
+    # if all services are deleted, it breaks because the destoy is inside a specific user_service_path
+  end
 
   private
 
-  # def set_user_service
-  #   @user_service = User.profiles.user_services.find(params[:id])
-  # end
+  def set_user_service
+    @user_service = UserService.find(params[:id])
+  end
 end
