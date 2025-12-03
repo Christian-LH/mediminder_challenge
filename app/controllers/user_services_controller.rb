@@ -3,16 +3,16 @@ class UserServicesController < ApplicationController
 
   def index
     @user_services = UserService.all
-    # if params[:query].present?
-    #   sql_subquery = "name ILIKE :query OR description ILIKE :query"
-    #   @user_services = @user_services.services.where(sql_subquery, query: "%#{params[:query]}%")
-    # end
 
     @user_age = current_user.profile.age
-
-    # add logic to only show services for current_profile (considering gender and age):
     @user_services = @user_services.joins(:service).where(services: { gender_restriction: current_user.profile.gender })
-                              .where("services.recommended_start_age <= ? AND services.recommended_end_age >= ?", @user_age, @user_age)
+    .where("services.recommended_start_age <= ? AND services.recommended_end_age >= ?", @user_age, @user_age)
+
+    # Filtering with search query - to be implemented later:
+      # if params[:query].present?
+      #   sql_subquery = "name ILIKE :query OR description ILIKE :query"
+      #   @user_services = @user_services.services.where(sql_subquery, query: "%#{params[:query]}%")
+      # end
   end
 
   # def show
