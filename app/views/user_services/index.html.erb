@@ -7,8 +7,8 @@
       <div class="user-info d-flex align-items-center">
         <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center pt-2" style="width: 60px; height: 60px;">
           <h3><i class="fa-solid fa-user"></i></h3>
+          <%# <img src="" alt="User Avatar" /> src = current_user.avatar_url %>
         </div>
-        <%# <img src="" alt="User Avatar" /> src = current_user.avatar_url %>
         <div class="d-flex px-3 lh-1 pt-2 align-items-start flex-column">
           <p>Hi, welcome back</p>
           <p>Name <%=  %></p> <%# current_user.name %>
@@ -18,6 +18,8 @@
         <a href="">Settings</a> <%# href = /settings or something %>
       </div>
     </div>
+
+    <%# search bar %>
     <div class="search-bar">
       <form action="" method="get"> <%# action = /search or something %>
         <input type="text" name="query" placeholder="Search services..." />
@@ -30,10 +32,14 @@
   <%# this is where the done services are displayed %>
   <div class="container">
     <% @user_services.where(status: "done").each do |done_user_service| %> <%# change status to the done value %>
-      <div>
-        <h2><%= done_user_service.service.name %></h2>
-        <p><%= done_user_service.completed_at %></p>
-      </div>
+      <%= link_to user_service_path(done_user_service) do %>
+        <div class="d-flex align-items-center my-3 p-3 border rounded shadow-sm hover-effect bg-success text-white">
+          <div>
+            <h2><%= done_user_service.service.name %></h2>
+            <p><%= done_user_service.completed_at %></p>
+          </div>
+        </div>
+      <% end %>
     <% end %>
   </div>
 
@@ -41,15 +47,16 @@
   <%# this is where the undone services are displayed %>
   <div class="container">
     <% @user_services.where(status: "undone").each do |user_service| %> <%# change status to the undone value %>
-      <div>
-        <h2><%= user_service.service.name %></h2>
-        <p><%= user_service.service.description %></p> <%# keep this or is it too much info? %>
-        <p><%= user_service.due_date %></p>
-      </div>
+      <%= link_to user_service_path(user_service) do %>
+        <div class="d-flex align-items-center my-3 p-3 border rounded shadow-sm hover-effect bg-light">
+          <div>
+            <h2><%= user_service.service.name %></h2>
+            <p><%= user_service.service.description %></p> <%# keep this or is it too much info? %>
+            <p><%= user_service.due_date %></p>
+          </div>
+        </div>
+      <% end %>
     <% end %>
   </div>
-
-    <%# done and undone containers have to be put as a cards %>
-    <%# because right now they are only "listed" %>
 
 </div>

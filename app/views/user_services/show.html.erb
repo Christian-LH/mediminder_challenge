@@ -1,0 +1,13 @@
+
+<div class="container mt-4">
+  <div class="d-flex align-items-center mb-4">
+    <%= link_to "⬅", user_services_path, class: "btn btn-primary mx-2 mr-5 rounded-circle pt-2 px-2", style: "width: 40px; height: 40px;" %>
+    <h1 class="mx-5">Service Info</h1>
+  </div>
+
+  <p>User Service ID: <%= @user_service.id %></p>
+  <p>Service Name: <%= @user_service.service.name %></p>
+  <p>Status: <%= @user_service.status %></p>
+  <p>Due Date: <%= @user_service.due_date %></p>
+  <p>Completed At: <%= @user_service.completed_at %></p>
+</div>
