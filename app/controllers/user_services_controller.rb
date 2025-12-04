@@ -7,7 +7,6 @@ class UserServicesController < ApplicationController
     @user_age = current_user.profile.age
     @user_services = @user_services.joins(:service).where(services: { gender_restriction: current_user.profile.gender })
                                                     .where("services.recommended_start_age <= ? AND services.recommended_end_age >= ?", @user_age, @user_age)
-
     # Filtering with search query - to be implemented later:
       # if params[:query].present?
       #   sql_subquery = "name ILIKE :query OR description ILIKE :query"
@@ -17,13 +16,6 @@ class UserServicesController < ApplicationController
 
   def show
   end
-
-  # def new
-  #   @user_service = UserService.new
-  # end
-
-  # def create
-  # end
 
   def edit
     @user_services = UserService.all

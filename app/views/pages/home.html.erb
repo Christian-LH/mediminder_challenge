@@ -7,7 +7,7 @@
         Your personal guide to staying ahead of preventive checkups and vaccinations.
       </p>
       <!-- Button Link depends on User has Profile or not -->
-      <% if @user.profil.nil? %>
+      <% if @user.profile.nil? %>
         <%= link_to "Get started", root_path %>
       <% else %>
         <%= link_to "Your upcoming checkups", root_path %>
