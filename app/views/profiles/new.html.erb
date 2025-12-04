@@ -1,0 +1,54 @@
+<h1>This is the profiles#new page</h1>
+
+<%# user should enter gender and birthdate %>
+<%# the gender should be displayed as two buttons %>
+<%# the birthday should be a calender to choose from but be saved in the following form: birthday: Date.new(2002, 3, 7) %>
+<%# it should all be on one page but the birthday input should be hidden until the gender is choosen and the gender buttons should be hidden when the birthday input shows up %>
+
+<div class="container">
+  <%= form_with model: [@user, @profile], local: true do |form| %>
+    <div id="gender-field" class="mt-4">
+      <h3>Choose your biological gender*</h3>
+      <%= form.radio_button :gender, 'male', id: 'gender_male' %>
+      <%= form.label :gender_male, 'Male' %><br>
+      <%= form.radio_button :gender, 'female', id: 'gender_female' %>
+      <%= form.label :gender_female, 'Female' %><br>
+    </div>
+    <div id="birthdate-field" class="my-5" style="display: none;">
+      <button type="button" id="back-button" class="btn btn-link">&larr; Back</button>
+      <h3>Enter your birthdate</h3>
+      <%= form.date_select :birthday, start_year: Date.today.year - 120, end_year: Date.today.year, default: { day: 1, month: 1, year: Date.today.year - 30 } %>
+    </div>
+    <div>
+      <%= form.submit "Create Profile" %>
+    </div>
+  <% end %>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const genderField = document.getElementById('gender-field');
+    const birthdateField = document.getElementById('birthdate-field');
+    const radios = document.querySelectorAll('input[name="profile[gender]"]');
+    const backButton = document.getElementById('back-button');
+
+    function showBirthdate() {
+      birthdateField.style.display = '';
+      genderField.style.display = 'none';
+    }
+
+    function showGender() {
+      birthdateField.style.display = 'none';
+      genderField.style.display = '';
+      // clear the radio selection so user can pick again
+      radios.forEach(r => r.checked = false);
+    }
+
+    // If a gender is already selected (for example when re-rendering after an error), show the birthdate
+    const preSelected = Array.from(radios).some(r => r.checked);
+    if (preSelected) showBirthdate();
+
+    radios.forEach(r => r.addEventListener('change', showBirthdate));
+    if (backButton) backButton.addEventListener('click', showGender);
+  });
+</script>

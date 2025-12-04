@@ -32,7 +32,7 @@
   <%# this is where the done services are displayed %>
   <div class="container">
     <% @user_services.where(status: "done").each do |done_user_service| %> <%# change status to the done value %>
-      <%= link_to user_service_path(done_user_service) do %>
+      <%= link_to profile_user_service_path(@profile, done_user_service) do %>
         <div class="d-flex align-items-center my-3 p-3 border rounded shadow-sm hover-effect bg-success text-white">
           <div>
             <h2><%= done_user_service.service.name %></h2>
@@ -46,8 +46,8 @@
 
   <%# this is where the undone services are displayed %>
   <div class="container">
-    <% @user_services.where(status: "undone").each do |user_service| %> <%# change status to the undone value %>
-      <%= link_to user_service_path(user_service) do %>
+    <% @user_services.where(status: "pending").each do |user_service| %> <%# change status to the undone value %>
+      <%= link_to profile_user_service_path(@profile, user_service) do %>
         <div class="d-flex align-items-center my-3 p-3 border rounded shadow-sm hover-effect bg-light">
           <div>
             <h2><%= user_service.service.name %></h2>

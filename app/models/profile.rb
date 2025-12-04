@@ -1,6 +1,6 @@
 class Profile < ApplicationRecord
   belongs_to :user
-  # has_many :user_services
+  has_many :user_services
   has_many :services, through: :user_services
 
   def age
