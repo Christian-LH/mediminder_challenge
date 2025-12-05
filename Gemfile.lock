@@ -159,7 +159,6 @@ GEM
     jbuilder (2.14.1)
       actionview (>= 7.0.0)
       activesupport (>= 7.0.0)
-    language_server-protocol (3.17.0.5)
     logger (1.7.0)
     loofah (2.24.1)
       crass (~> 1.0.2)
@@ -214,7 +213,6 @@ GEM
     pp (0.6.3)
       prettyprint
     prettyprint (0.2.0)
-    prism (1.6.0)
     psych (5.2.6)
       date
       stringio
@@ -262,8 +260,6 @@ GEM
       tsort (>= 0.2)
       zeitwerk (~> 2.6)
     rake (13.3.1)
-    rbs (3.9.5)
-      logger
     rdoc (6.16.1)
       erb
       psych (>= 4.0.0)
@@ -275,10 +271,6 @@ GEM
       actionpack (>= 7.0)
       railties (>= 7.0)
     rexml (3.4.4)
-    ruby-lsp (0.26.4)
-      language_server-protocol (~> 3.17.0)
-      prism (>= 1.2, < 2.0)
-      rbs (>= 3, < 5)
     rubyzip (3.2.2)
     sassc (2.4.0)
       ffi (~> 1.9)
@@ -357,7 +349,6 @@ DEPENDENCIES
   pg (~> 1.1)
   puma (>= 5.0)
   rails (~> 7.1.6)
-  ruby-lsp (~> 0.26.4)
   sassc-rails
   selenium-webdriver
   simple_form!
