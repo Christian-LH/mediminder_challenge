@@ -1,4 +1,3 @@
-<h1>This is the profiles#new page</h1>
 
 <%# user should enter gender and birthdate %>
 <%# the gender should be displayed as two buttons %>
@@ -8,7 +7,7 @@
 <div class="container">
   <%= form_with model: [@user, @profile], local: true do |form| %>
     <div id="gender-field" class="mt-4">
-      <h3>Choose your biological gender*</h3>
+      <h3>Choose your gender*</h3>
       <%= form.radio_button :gender, 'male', id: 'gender_male' %>
       <%= form.label :gender_male, 'Male' %><br>
       <%= form.radio_button :gender, 'female', id: 'gender_female' %>
@@ -17,10 +16,10 @@
     <div id="birthdate-field" class="my-5" style="display: none;">
       <button type="button" id="back-button" class="btn btn-link">&larr; Back</button>
       <h3>Enter your birthdate</h3>
-      <%= form.date_select :birthday, start_year: Date.today.year - 120, end_year: Date.today.year, default: { day: 1, month: 1, year: Date.today.year - 30 } %>
+      <%= form.date_select :birthday, start_year: Date.today.year - 100, end_year: Date.today.year, default: { day: 1, month: 1, year: Date.today.year - 30 } %>
     </div>
     <div>
-      <%= form.submit "Create Profile" %>
+      <%= form.submit "Create Profile", id: "create-profile" %>
     </div>
   <% end %>
 </div>
@@ -40,11 +39,9 @@
     function showGender() {
       birthdateField.style.display = 'none';
       genderField.style.display = '';
-      // clear the radio selection so user can pick again
-      radios.forEach(r => r.checked = false);
     }
 
-    // If a gender is already selected (for example when re-rendering after an error), show the birthdate
+    // keeps the birthday when re-rendering
     const preSelected = Array.from(radios).some(r => r.checked);
     if (preSelected) showBirthdate();
 

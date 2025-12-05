@@ -4,6 +4,9 @@ class ProfilesController < ApplicationController
   # when the profile and the user_services are created, the user should be redirected to the user_services index page for that profile
 
   def new
+    if current_user.profile.present?
+      redirect_to profile_user_services_path(current_user.profile)
+    end
     @profile = Profile.new
   end
 
@@ -50,7 +53,7 @@ class ProfilesController < ApplicationController
 
     Service.find_each do |service|
       # gender restriction
-      if service.gender_restriction.present? && profile.gender.present? && service.gender_restriction != profile.gender
+      if service.gender_restriction.present? && profile.gender.present? && service.gender_restriction != profile.gender  && service.gender_restriction != 'any'
         next
       end
 
