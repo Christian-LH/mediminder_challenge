@@ -1,62 +1,68 @@
-<h1>UserServices Index Page</h1>
+<div class="container py-4">
 
-<div class="container">
-  <%# this is the header of the page (containing avatar, greating, settings button and search bar) %>
-  <div class="header">
+  <!-- HEADER -->
+  <div class="mb-4">
     <div class="d-flex justify-content-between align-items-center">
-      <div class="user-info d-flex align-items-center">
-        <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center pt-2" style="width: 60px; height: 60px;">
-          <h3><i class="fa-solid fa-user"></i></h3>
-          <%# <img src="" alt="User Avatar" /> src = current_user.avatar_url %>
+
+      <!-- User Info -->
+      <div class="d-flex align-items-center">
+        <div class="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 60px; height: 60px;">
+          <i class="fa-solid fa-user fs-3"></i>
         </div>
-        <div class="d-flex px-3 lh-1 pt-2 align-items-start flex-column">
-          <p>Hi, welcome back</p>
-          <p>Name <%=  %></p> <%# current_user.name %>
-        </div>
+
+        <%# <div class="lh-sm">
+          <p class="mb-0 text-secondary small">Hi, welcome back</p>
+          <p class="fw-semibold mb-0"><%= current_user.name if current_user %></p>
+        <%# </div> %>
       </div>
-      <div class="settings">
-        <a href="">Settings</a> <%# href = /settings or something %>
-      </div>
+
+      <!-- Settings -->
+      <%= link_to "Settings", "#", class: "btn btn-outline-secondary btn-sm" %>
+
     </div>
 
-    <%# search bar %>
-    <div class="search-bar">
-      <form action="" method="get"> <%# action = /search or something %>
-        <input type="text" name="query" placeholder="Search services..." />
-        <button type="submit">Search</button>
-      </form>
-    </div>
+    <!-- SEARCH BAR -->
+    <form action="" method="get" class="mt-3">
+      <div class="input-group">
+        <input type="text" name="query" class="form-control" placeholder="Search services...">
+        <button class="btn btn-primary" type="submit">Search</button>
+      </div>
+    </form>
   </div>
 
 
-  <%# this is where the done services are displayed %>
-  <div class="container">
-    <% @user_services.where(status: "done").each do |done_user_service| %> <%# change status to the done value %>
-      <%= link_to profile_user_service_path(@profile, done_user_service) do %>
-        <div class="d-flex align-items-center my-3 p-3 border rounded shadow-sm hover-effect bg-success text-white">
-          <div>
-            <h2><%= done_user_service.service.name %></h2>
-            <p><%= done_user_service.completed_at %></p>
-          </div>
-        </div>
-      <% end %>
+
+  <!-- DONE SERVICES -->
+  <%# <h5 class="text-uppercase text-muted mt-4 mb-2">Completed</h5>
+  <% @user_services.where(status: "done").each do |done_user_service| %>
+    <%# <%= link_to profile_user_service_path(@profile, done_user_service), class: "text-decoration-none" do %>
+      <%# <div class="d-flex align-items-center mb-3 p-3 rounded shadow-sm bg-success text-white"> %>
+        <%# <div> %>
+          <%# <h6 class="fw-bold mb-1"><%= done_user_service.service.name %></h6>
+          <%# <p class="mb-0 small"><%= done_user_service.completed_at %></p>
+        <%# </div>
+      </div>
     <% end %>
-  </div>
+  <%# <% end %>
 
 
-  <%# this is where the undone services are displayed %>
-  <div class="container">
-    <% @user_services.where(status: "pending").each do |user_service| %> <%# change status to the undone value %>
-      <%= link_to profile_user_service_path(@profile, user_service) do %>
-        <div class="d-flex align-items-center my-3 p-3 border rounded shadow-sm hover-effect bg-light">
-          <div>
-            <h2><%= user_service.service.name %></h2>
-            <%# <p><%= user_service.service.description </p> keep this or is it too much info? %> 
-            <p><%= user_service.due_date %></p>
-          </div>
+
+  <!-- PENDING SERVICES -->
+  <h4 class="text-muted mt-4 mb-3">Next checkups</h4>
+
+  <% @profile.user_services.where(status: "pending").each do |user_service| %>
+    <%= link_to profile_user_service_path(@profile, user_service), class: "text-decoration-none" do %>
+      <div class="d-flex align-items-center mb-4 p-4 pb-5 rounded-4 shadow bg-white">
+        <div>
+          <h6 class="fw-semibold mb-1"><%= user_service.service.name %></h6>
+          <p class="mb-0 small text-secondary">
+            <%= user_service.due_date.strftime("%-d. %B %Y") %>
+            (<%= distance_of_time_in_words(Date.today, user_service.due_date) %>)
+          </p>
         </div>
-      <% end %>
+      </div>
     <% end %>
-  </div>
+  <% end %>
+
 
 </div>
