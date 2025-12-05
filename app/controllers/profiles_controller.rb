@@ -19,7 +19,7 @@ class ProfilesController < ApplicationController
         @profile.save!
         create_user_services_for(@profile)
       end
-      redirect_to profile_user_services_path(@profile), notice: "Profile was successfully created."
+      redirect_to profile_user_services_path(@profile) # , notice: "Profile was successfully created."
     rescue ActiveRecord::RecordInvalid => e
       Rails.logger.error("Profile creation failed: #{e.message}")
       render :new, status: :unprocessable_entity
