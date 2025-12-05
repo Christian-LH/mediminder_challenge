@@ -1,21 +1,62 @@
 <div class="container py-5">
   <div class="row justify-content-center">
-    <div class="col-md-6 col-lg-5">
+    <div class="col-md-7 col-lg-6">
 
-      <div class="container mt-4">
-        <div class="d-flex align-items-center mb-4">
-          <%= link_to "⬅", profile_user_services_path, class: "btn btn-primary mx-2 mr-5 rounded-circle pt-2 px-2", style: "width: 40px; height: 40px;" %>
-          <h1 class="mx-5">Service Info</h1>
-        </div>
+      <!-- Header with back button -->
+     <div class="d-flex align-items-center mb-4">
+        <%= link_to profile_user_services_path,
+                    class: "btn btn-outline-secondary me-3" do %>
+          <i class="bi bi-arrow-left"></i>
+        <% end %>
 
-        <p>User Service ID: <%= @user_service.id %></p>
-        <p>Description: <%= @user_service.service.description %></p>
-        <p>Service Name: <%= @user_service.service.name %></p>
-        <p>Status: <%= @user_service.status %></p>
-        <p>Due Date: <%= @user_service.due_date %></p>
-        <p>Completed At: <%= @user_service.completed_at %></p>
+        <h2 class="mb-0 fw-bold">Service details</h2>
       </div>
-      
+
+      <!-- Card with service info -->
+      <div class="card shadow-sm border-0" style="background: linear-gradient(180deg, rgba(25,135,84,0.15) 100%, rgba(25, 134,84,1) 0%);">
+        <div class="card-body">
+
+          <!-- Title + description -->
+          <h4 class="fw-bold mb-2"><%= @user_service.service.name %></h4>
+          <p class="text-muted mb-4"><%= @user_service.service.description %></p>
+
+          <!-- Meta data as definition list -->
+          <dl class="row small mb-4">
+            <dt class="col-5 text-muted">User service ID</dt>
+            <dd class="col-7 text-end"><%= @user_service.id %></dd>
+
+            <dt class="col-5 text-muted">Status</dt>
+            <dd class="col-7 text-end"><%= @user_service.status || "not set" %></dd>
+
+            <dt class="col-5 text-muted">Due date</dt>
+            <dd class="col-7 text-end">
+              <%= @user_service.due_date&.strftime("%d %b %Y") || "—" %>
+            </dd>
+
+            <dt class="col-5 text-muted">Completed at</dt>
+            <dd class="col-7 text-end">
+              <%= @user_service.completed_at&.strftime("%d %b %Y") || "—" %>
+            </dd>
+          </dl>
+
+          <!-- Action buttons -->
+          <div class="d-flex flex-column gap-2 mt-3">
+            <button type="button" class="btn btn-success btn-lg w-100">
+              I already went
+            </button>
+
+            <button type="button" class="btn btn-light btn-lg w-100">
+              Remind me again
+            </button>
+
+            <button type="button" class="btn btn-secondary btn-lg w-100">
+              I will not go
+            </button>
+          </div>
+
+        </div>
+      </div>
+
     </div>
   </div>
 </div>

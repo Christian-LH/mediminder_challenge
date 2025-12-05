@@ -1,23 +1,9 @@
-<div class="position-fixed bottom-0 start-0 w-100 bg-white border-top shadow-sm" style="z-index:1030;">
-  <nav class="d-flex justify-content-center py-2">
-
-    <!-- Home -->
-    <%= link_to root_path, class: "flex-fill text-center text-decoration-none text-secondary" do %>
-      <i class="bi bi-house-door fs-4 d-block"></i>
-      <span class="small d-block">Home</span>
+<!-- Floating Pill Button -->
+<% if user_signed_in? && current_user.profile.present? %>
+  <div class="position-fixed bottom-0 start-50 translate-middle-x mb-4" style="z-index: 1030;">
+    <%= link_to profile_user_services_path(current_user.profile),
+                class: "btn btn-primary rounded-pill px-4 py-2 shadow-sm" do %>
+      Next checkups
     <% end %>
-
-    <!-- Profile -->
-    <%= link_to root_path, class: "flex-fill text-center text-decoration-none text-secondary" do %>
-      <i class="bi bi-person fs-4 d-block"></i>
-      <span class="small d-block">Profile</span>
-    <% end %>
-
-    <!-- Checkups -->
-    <%= link_to root_path, class: "flex-fill text-center text-decoration-none text-secondary" do %>
-      <i class="bi bi-calendar2-check fs-4 d-block"></i>
-      <span class="small d-block">Checkups</span>
-    <% end %>
-
-  </nav>
-</div>
+  </div>
+<% end %>
