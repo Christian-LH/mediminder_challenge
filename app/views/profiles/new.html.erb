@@ -4,48 +4,83 @@
 <%# the birthday should be a calender to choose from but be saved in the following form: birthday: Date.new(2002, 3, 7) %>
 <%# it should all be on one page but the birthday input should be hidden until the gender is choosen and the gender buttons should be hidden when the birthday input shows up %>
 
-<div class="container">
-  <%= form_with model: [@user, @profile], local: true do |form| %>
-    <div id="gender-field" class="mt-4">
-      <h3>Choose your gender*</h3>
-      <%= form.radio_button :gender, 'male', id: 'gender_male' %>
-      <%= form.label :gender_male, 'Male' %><br>
-      <%= form.radio_button :gender, 'female', id: 'gender_female' %>
-      <%= form.label :gender_female, 'Female' %><br>
+<div class="container-fluid bg-light py-5">
+  <!-- HERO -->
+  <section class="container py-4 pt-2" style="background: linear-gradient(180deg, rgba(25,135,84,0.15) 100%, rgba(25, 134,84,1) 0%);">
+    <div class="row align-items-center">
+      <div class="col-lg-7 text-center text-lg-start">
+        <div class="d-flex flex-column flex-sm-row gap-2 justify-content-center justify-content-lg-start">
+          <%= form_with model: [@user, @profile], local: true do |form| %>
+            <div id="gender-field" class="my-3">
+              <h3 class="mt-5">Choose your gender</h3>
+              <%= form.hidden_field :gender, id: 'profile_gender_hidden' %>
+              <div class="d-flex gap-3 justify-content-center my-5">
+                <button type="button" class="gender-btn btn btn-outline-primary" data-gender="male" id="btn_gender_male" style="width: 110px; height: 50px;">♂ Male</button>
+                <button type="button" class="gender-btn btn btn-outline-primary" data-gender="female" id="btn_gender_female" style="width: 110px; height: 50px;">♀ Female</button>
+              </div>
+            </div>
+            <div id="birthdate-field" class="mb-4" style="display: none;">
+              <div class="d-flex justify-content-start align-items-start mb-4 mt-1">
+                <button type="button" id="back-button" class="btn btn-outline-secondary btn-sm mb-2">⬅ Back</button>
+              </div>
+              <h3 class="mb-5">Enter your birthdate</h3>
+              <%= form.date_select :birthday, start_year: Date.today.year - 100, end_year: Date.today.year, include_blank: true %>
+            </div>
+            <div>
+              <%= form.submit "Create Profile", id: "create-profile", class: "btn btn-primary btn-lg mb-2 mt-2", style: "display: none;" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
     </div>
-    <div id="birthdate-field" class="my-5" style="display: none;">
-      <button type="button" id="back-button" class="btn btn-link">&larr; Back</button>
-      <h3>Enter your birthdate</h3>
-      <%= form.date_select :birthday, start_year: Date.today.year - 100, end_year: Date.today.year, default: { day: 1, month: 1, year: Date.today.year - 30 } %>
-    </div>
-    <div>
-      <%= form.submit "Create Profile", id: "create-profile" %>
-    </div>
-  <% end %>
+  </section>
 </div>
+
+
+
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     const genderField = document.getElementById('gender-field');
     const birthdateField = document.getElementById('birthdate-field');
-    const radios = document.querySelectorAll('input[name="profile[gender]"]');
+    const hiddenGender = document.getElementById('profile_gender_hidden');
+    const genderButtons = document.querySelectorAll('.gender-btn');
     const backButton = document.getElementById('back-button');
+    const createProfileButton = document.getElementById('create-profile');
+    const birthSelects = birthdateField.querySelectorAll('select');
+
+    function checkBirthdayFilled() {
+      return Array.from(birthSelects).every(s => s.value && s.value !== "");
+    }
 
     function showBirthdate() {
       birthdateField.style.display = '';
       genderField.style.display = 'none';
+      createProfileButton.style.display = checkBirthdayFilled() ? '' : 'none';
     }
 
     function showGender() {
       birthdateField.style.display = 'none';
       genderField.style.display = '';
+      createProfileButton.style.display = 'none';
+      if (hiddenGender) hiddenGender.value = '';
+      genderButtons.forEach(b => b.classList.remove('active'));
+      birthSelects.forEach(s => s.value = '');
     }
 
-    // keeps the birthday when re-rendering
-    const preSelected = Array.from(radios).some(r => r.checked);
-    if (preSelected) showBirthdate();
+    function onBirthdayChange() {
+      createProfileButton.style.display = checkBirthdayFilled() ? '' : 'none';
+    }
 
-    radios.forEach(r => r.addEventListener('change', showBirthdate));
+    genderButtons.forEach(btn => btn.addEventListener('click', function() {
+      const g = this.dataset.gender;
+      if (hiddenGender) hiddenGender.value = g;
+      genderButtons.forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      showBirthdate();
+    }));
+
+    birthSelects.forEach(s => s.addEventListener('change', onBirthdayChange));
     if (backButton) backButton.addEventListener('click', showGender);
   });
 </script>
