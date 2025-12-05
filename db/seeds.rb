@@ -87,16 +87,16 @@ puts "Seeding Services..."
 services = [
   # --- General Checkups (All Genders) ---
   {
-    name: "Zahnvorsorge",
-    description: "Kontrolle der Zähne und des Zahnfleischs. Einmal jährlich Zahnsteinentfernung als Kassenleistung. Bonusheft nicht vergessen!",
+    name: "Dental Checkup",
+    description: "Examination of teeth and gums. Annual tartar removal covered by insurance. Don’t forget your bonus booklet!",
     category: "checkup",
     gender_restriction: "any",
     recommended_start_age: 18,
     frequency_months: 6
   },
   {
-    name: "Gesundheits-Check-up (Einmalig)",
-    description: "Einmaliger allgemeiner Gesundheits-Check (Blut, Urin, Anamnese) zur Früherkennung von Herz-Kreislauf-Erkrankungen und Diabetes.",
+    name: "General Health Check-up (One-time)",
+    description: "One-time general health check (blood, urine, medical history) for early detection of cardiovascular disease and diabetes.",
     category: "checkup",
     gender_restriction: "any",
     recommended_start_age: 18,
@@ -104,16 +104,16 @@ services = [
     frequency_months: nil
   },
   {
-    name: "Gesundheits-Check-up (Check-up 35)",
-    description: "Umfassender Gesundheits-Check alle 3 Jahre. Inklusive Blutwerte (Cholesterin, Zucker), Urin und Anamnese. Einmalig inklusive Hepatitis-Screening.",
+    name: "General Health Check-up (Over 35)",
+    description: "Comprehensive health check every 3 years. Includes blood values (cholesterol, glucose), urine analysis, and medical history. One-time hepatitis screening included.",
     category: "checkup",
     gender_restriction: "any",
     recommended_start_age: 35,
     frequency_months: 36
   },
   {
-    name: "Hautkrebs-Screening",
-    description: "Visuelle Ganzkörperuntersuchung der Haut auf Veränderungen (Muttermale, Melanome) durch einen Dermatologen oder qualifizierten Hausarzt.",
+    name: "Skin Cancer Screening",
+    description: "Full-body visual examination of the skin for changes (moles, melanomas) by a dermatologist or trained GP.",
     category: "checkup",
     gender_restriction: "any",
     recommended_start_age: 35,
@@ -122,32 +122,32 @@ services = [
 
   # --- Checkups for Women ---
   {
-    name: "Gynäkologische Krebsvorsorge",
-    description: "Untersuchung der Geschlechtsorgane und Abstrich vom Gebärmutterhals (Pap-Test) zur Früherkennung von Zervixkarzinomen.",
+    name: "Gynecological Cancer Screening",
+    description: "Examination of female reproductive organs and cervical smear (Pap test) for early detection of cervical cancer.",
     category: "checkup",
     gender_restriction: "female",
     recommended_start_age: 20,
     frequency_months: 12
   },
   {
-    name: "Brustkrebsvorsorge (Tastuntersuchung)",
-    description: "Abtasten der Brüste und der örtlichen Lymphknoten durch den Frauenarzt.",
+    name: "Breast Cancer Screening (Clinical Exam)",
+    description: "Clinical breast exam including palpation of breasts and regional lymph nodes by a gynecologist.",
     category: "checkup",
     gender_restriction: "female",
     recommended_start_age: 30,
     frequency_months: 12
   },
   {
-    name: "Ko-Test (Pap + HPV)",
-    description: "Kombinations-Screening: Abstrich auf Zellveränderungen und Test auf Humane Papillomviren (HPV). Ersetzt alle 3 Jahre den einfachen Pap-Test.",
+    name: "Co-testing (Pap + HPV)",
+    description: "Combined screening: cervical smear for cellular changes and HPV test. Replaces the stand-alone Pap test every 3 years.",
     category: "checkup",
     gender_restriction: "female",
     recommended_start_age: 35,
     frequency_months: 36
   },
   {
-    name: "Mammographie-Screening",
-    description: "Röntgenuntersuchung der Brust zur Früherkennung von Brustkrebs. Einladung erfolgt meist automatisch per Post.",
+    name: "Mammography Screening",
+    description: "X-ray examination of the breasts for early detection of breast cancer. Invitation is usually sent automatically by mail.",
     category: "checkup",
     gender_restriction: "female",
     recommended_start_age: 50,
@@ -157,26 +157,26 @@ services = [
 
   # --- Checkups for Men ---
   {
-    name: "Krebsvorsorge Männer (Prostata/Genitalien)",
-    description: "Untersuchung der äußeren Geschlechtsorgane, Abtasten der Prostata vom Enddarm aus und Kontrolle der Lymphknoten.",
+    name: "Men’s Cancer Screening (Prostate/Genitals)",
+    description: "Examination of external genitalia, rectal prostate palpation, and lymph node assessment.",
     category: "checkup",
     gender_restriction: "male",
     recommended_start_age: 45,
     frequency_months: 12
   },
   {
-    name: "Bauchaortenaneurysma-Screening",
-    description: "Ultraschalluntersuchung der Bauchschlagader zur Früherkennung von Aussackungen (Aneurysmen).",
+    name: "Abdominal Aortic Aneurysm Screening",
+    description: "Ultrasound examination of the abdominal aorta to detect dangerous aneurysms.",
     category: "checkup",
     gender_restriction: "male",
     recommended_start_age: 65,
     frequency_months: nil
   },
 
-  # --- Colorectal Cancer (Darmkrebs) - Complex Logic Simplified ---
+  # --- Colorectal Cancer Screening ---
   {
-    name: "Darmkrebsvorsorge (Stuhltest)",
-    description: "Immunologischer Test auf okkultes (nicht sichtbares) Blut im Stuhl.",
+    name: "Colorectal Cancer Screening (Stool Test)",
+    description: "Immunological test for occult (non-visible) blood in stool.",
     category: "checkup",
     gender_restriction: "any",
     recommended_start_age: 50,
@@ -184,66 +184,66 @@ services = [
     frequency_months: 12
   },
   {
-    name: "Darmkrebsvorsorge (Darmspiegelung - Männer)",
-    description: "Große Darmspiegelung (Koloskopie). Alternativ: Stuhltest alle 2 Jahre.",
+    name: "Colonoscopy Screening (Men)",
+    description: "Full colonoscopy. Alternative: stool test every 2 years.",
     category: "checkup",
     gender_restriction: "male",
     recommended_start_age: 50,
     frequency_months: 120
   },
   {
-    name: "Darmkrebsvorsorge (Darmspiegelung - Frauen)",
-    description: "Große Darmspiegelung (Koloskopie). Alternativ: Stuhltest alle 2 Jahre.",
+    name: "Colonoscopy Screening (Women)",
+    description: "Full colonoscopy. Alternative: stool test every 2 years.",
     category: "checkup",
     gender_restriction: "female",
     recommended_start_age: 55,
     frequency_months: 120
   },
 
-  # --- Vaccinations (STIKO Recommendations for Adults) ---
+  # --- Vaccinations (Adults, STIKO Recommendations) ---
   {
-    name: "Tetanus & Diphtherie (Auffrischung)",
-    description: "Regelmäßige Auffrischung alle 10 Jahre. Mindestens einmal im Erwachsenenalter sollte Keuchhusten (Pertussis) mitgeimpft werden (Tdap).",
+    name: "Tetanus & Diphtheria (Booster)",
+    description: "Regular booster every 10 years. At least once in adulthood combined with pertussis (Tdap).",
     category: "vaccination",
     gender_restriction: "any",
     recommended_start_age: 18,
     frequency_months: 120
   },
   {
-    name: "Masern-Impfung",
-    description: "Einmalige Impfung für alle nach 1970 Geborenen mit unklarem Impfstatus oder nur einer Impfung in der Kindheit.",
+    name: "Measles Vaccination",
+    description: "Single vaccination for all adults born after 1970 with unclear vaccination status or only one childhood dose.",
     category: "vaccination",
     gender_restriction: "any",
     recommended_start_age: 18,
     frequency_months: nil
   },
   {
-    name: "Grippe-Impfung (Influenza)",
-    description: "Jährliche Impfung im Herbst (Okt/Nov). Standardempfehlung ab 60 Jahren, für Schwangere und chronisch Kranke.",
+    name: "Flu Vaccination (Influenza)",
+    description: "Annual vaccination in autumn (Oct/Nov). Standard recommendation from age 60, plus pregnant women and chronically ill persons.",
     category: "vaccination",
     gender_restriction: "any",
     recommended_start_age: 60,
     frequency_months: 12
   },
   {
-    name: "Pneumokokken-Impfung",
-    description: "Schutz vor Lungenentzündungen. Standardimpfung ab 60 Jahren.",
+    name: "Pneumococcal Vaccination",
+    description: "Protection against pneumonia. Standard vaccination from age 60.",
     category: "vaccination",
     gender_restriction: "any",
     recommended_start_age: 60,
     frequency_months: nil
   },
   {
-    name: "Gürtelrose (Herpes Zoster)",
-    description: "Zwei Impfdosen im Abstand von 2 bis 6 Monaten. Standard ab 60 Jahren (ab 50 bei Grunderkrankungen).",
+    name: "Shingles (Herpes Zoster)",
+    description: "Two doses 2–6 months apart. Standard recommendation from age 60 (from 50 with underlying conditions).",
     category: "vaccination",
     gender_restriction: "any",
     recommended_start_age: 60,
     frequency_months: nil
   },
   {
-    name: "Corona-Schutzimpfung (COVID-19)",
-    description: "Jährliche Auffrischung im Herbst für Personen ab 60 Jahren und Risikogruppen. Basisimmunität (3 Kontakte) sollte jeder Erwachsene haben.",
+    name: "COVID-19 Vaccination",
+    description: "Annual booster in autumn for adults over 60 and risk groups. Basic immunity (3 exposures) recommended for all adults.",
     category: "vaccination",
     gender_restriction: "any",
     recommended_start_age: 60,
