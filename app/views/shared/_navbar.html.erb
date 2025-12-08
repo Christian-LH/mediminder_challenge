@@ -22,7 +22,11 @@
         <ul class="navbar-nav">
 
           <li class="nav-item">
-            <%= link_to "Profil", root_path, class: "nav-link" %>
+            <% if current_profile %>
+              <%= link_to "Profile", profile_path(current_profile), class: "nav-link" %>
+            <% else %>
+              <%= link_to "Create new profile", new_profile_path, class: "nav-link" %>
+            <% end %>
           </li>
 
           <li class="nav-item">

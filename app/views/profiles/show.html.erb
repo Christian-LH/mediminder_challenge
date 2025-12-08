@@ -1,0 +1,20 @@
+<div class="d-flex justify-content-center align-items-start min-vh-100 pt-5">
+  <div class="w-100" style="max-width: 480px;">
+
+    <div class="text-center mb-4">
+      <h3 class="mb-4">Hello <%= @profile.user_name %></h3>
+      <p>What would you like to do?</p>
+    </div>
+
+    <div class="d-grid gap-3">
+      <%= link_to "Add a new profile",
+                  new_profile_path,
+                  class: "btn btn-outline-secondary py-3" %>
+
+      <%= link_to "Change profile",
+                  profiles_path,
+                  class: "btn btn-outline-secondary py-3" %>
+    </div>
+
+  </div>
+</div>

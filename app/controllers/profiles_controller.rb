@@ -3,6 +3,10 @@ class ProfilesController < ApplicationController
   # when creating a new profile, it should automatically also create the user_services that belong to the profile (so for the correct gender and age group)
   # when the profile and the user_services are created, the user should be redirected to the user_services index page for that profile
 
+  def index
+    @user_profiles = Profile.where(user: current_user)
+  end
+
   def show
   end
 
