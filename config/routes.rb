@@ -11,7 +11,7 @@ Rails.application.routes.draw do
   # root "posts#index"
 
   # resources :users do
-    resources :profiles, only: [:new, :create, :edit, :update] do
+    resources :profiles, only: [:show, :new, :create, :edit, :update] do
       resources :user_services, only: [:index, :show, :edit, :update, :destroy]
     end
   # end

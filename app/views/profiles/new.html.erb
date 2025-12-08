@@ -1,25 +1,67 @@
-<div class="container mt-4" data-controller="multi-step">
+<div class="d-flex justify-content-center align-items-start min-vh-100 pt-5"
+     data-controller="multi-step">
 
-  <%= simple_form_for @profile do |f| %>
+  <div class="w-100" style="max-width: 480px;">
 
-    <!-- Step 1 - Gender pick -->
-    <div data-multi-step-target="genderStep" class="mb-3">
-      <div class="form-label">Geschlecht</div>
-      <div class="btn-group" role="group">
-        <%= f.collection_radio_buttons :gender, ['male', 'female'], :to_s, :capitalize do |b| %>
-          <%= b.label class: "btn btn-outline-primary" do %>
-            <%= b.radio_button(class: "d-none") %> <%= b.text %>
+    <%= simple_form_for @profile do |f| %>
+
+      <!-- Step 1 - Gender pick -->
+      <div data-multi-step-target="genderStep" class="text-center">
+        <h3 class="mt-4 mb-4">Choose your gender</h3>
+
+        <div class="d-flex justify-content-center gap-3">
+          <%= f.collection_radio_buttons :gender, ["♂ Male", "♀ Female"], :to_s, :to_s do |b| %>
+            <%= b.radio_button class: "btn-check" %>
+            <%= b.label class: "btn btn-outline-primary btn-lg px-4 py-3" do %>
+              <%= b.text %>
+            <% end %>
           <% end %>
-        <% end %>
+        </div>
+
+        <button type="button"
+                class="btn btn-outline-primary btn-lg mt-4 w-100"
+                data-action="click->multi-step#nextStep">
+          Next
+        </button>
       </div>
-      <button type="button" class="btn btn-primary mt-3" data-action="click->multi-step#nextStep">Next</button>
-    </div>
 
-    <!-- Step 2 - birthdate pick -->
-    <div data-multi-step-target="dateStep" class="d-none">
-      <!-- insert flatpickr here -->
-      <%= f.submit "Get overview", class: "btn btn-primary mt-3" %>
-    </div>
+      <!-- Step 2 - Birthdate pick -->
+      <div data-multi-step-target="dateStep" class="d-none text-center">
+        <h3 class="mt-4 mb-4">Enter your birthdate</h3>
 
-  <% end %>
+        <div class="px-3">
+          <%= f.input :birthday,
+                      as: :date,
+                      label: false,
+                      start_year: Date.today.year - 100,
+                      end_year: Date.today.year,
+                      include_blank: true %>
+        </div>
+
+        <button type="button"
+                class="btn btn-outline-primary btn-lg mt-4 w-100"
+                data-action="click->multi-step#nextStep2">
+          Next
+        </button>
+      </div>
+
+      <!-- Step 3 - Username -->
+      <div data-multi-step-target="nameStep" class="d-none text-center">
+        <h3 class="mt-4 mb-4">Please set a username</h3>
+
+        <div class="px-3">
+          <%= f.input :user_name,
+                      label: false,
+                      input_html: { class: "form-control form-control-lg", placeholder: "Username" } %>
+        </div>
+
+        <%= f.submit "View your checkups",
+                    class: "btn btn-primary btn-lg mt-4 w-100" %>
+      </div>
+
+
+    <% end %>
+
+  </div>
+
 </div>
