@@ -86,9 +86,11 @@ class ProfilesController < ApplicationController
       # create user services only if none exist yet
       create_user_services_for(@profile) if @profile.user_services.empty?
 
-      if params[:profile][:vaccination_pass].present?
+      if @profile.vaccination_passes.attached?
         vaccinations = extract_vaccinations_from_pass(@profile)
         Rails.logger.info("ProfilesController#update: vaccinations extracted: #{vaccinations.inspect}")
+        processed_count = @profile.mark_vaccinations_as_completed!(vaccinations)
+        Rails.logger.info("ProfilesController#update: processed_count=#{processed_count}")
       end
 
       redirect_to profile_user_services_path(@profile)
@@ -100,7 +102,7 @@ class ProfilesController < ApplicationController
   private
 
   def profile_params
-    params.require(:profile).permit(:gender, :birthday, :vaccination_pass)
+    params.require(:profile).permit(:gender, :birthday, vaccination_passes: [])
   end
 
   def create_user_services_for(profile)
@@ -128,87 +130,93 @@ class ProfilesController < ApplicationController
   end
 
   def extract_vaccinations_from_pass(profile)
-    return [] unless profile.vaccination_pass.attached?
+    return [] unless profile.vaccination_passes.attached?
     Rails.logger.info("extract_vaccinations_from_pass: starting for profile=#{profile.id}")
-    profile.vaccination_pass.open(tmpdir: Dir.tmpdir) do |file|
-      Rails.logger.info("extract_vaccinations_from_pass: opened file at=#{file.path}")
-      @chat = RubyLLM.chat(model: "gpt-4o")
 
-      instructions = <<-PROMPT
-        You are an assistant for a German preventive health app.
-        You read German vaccination passes ("Impfausweis" / "Impfpass") and extract
-        the vaccinations that a single person has already received.
+    results = []
+    profile.vaccination_passes.each do |attachment|
+      attachment.open(tmpdir: Dir.tmpdir) do |file|
+        Rails.logger.info("extract_vaccinations_from_pass: opened file at=#{file.path} (blob id=#{attachment.blob.id})")
+        @chat = RubyLLM.chat(model: "gpt-4o")
 
-        Return ONLY valid JSON (no Markdown, no extra text) in this exact format:
+        instructions = <<-PROMPT
+          You are an assistant for a German preventive health app.
+          You read German vaccination passes ("Impfausweis" / "Impfpass") and extract
+          the vaccinations that a single person has already received.
 
-        [
-          {
-            "name": "short vaccine name",
-            "date": "YYYY-MM-DD or null if you cannot read the exact date"
-          }
-        ]
+          Return ONLY valid JSON (no Markdown, no extra text) in this exact format:
 
-        If the vaccination is in the following list, use EXACTLY the "name" from this list: #{VACC_SERVICES}
+          [
+            {
+              "name": "short vaccine name",
+              "description": "short description of what the vaccine is about",
+              "date": "YYYY-MM-DD or null if you cannot read the exact date"
+            }
+          ]
 
-        If it is a vaccination NOT in the above list, still include it with the name as read from the pass.
+          If the vaccination is in the following list, use EXACTLY the "name" from this list: #{VACC_SERVICES}
 
-        Rules:
-        - If a vaccine appears multiple times, include every dose as a separate object.
-        - If you are unsure about the date, use null.
-      PROMPT
-      # when it can't read one vaccination, it should return something so that the user knows that
+          If it is a vaccination NOT in the above list, still include it with the name as read from the pass.
 
-      # User message & system_promt + image file
-      begin
-        Rails.logger.info("extract_vaccinations_from_pass: sending file to RubyLLM model")
-        response = @chat.with_instructions(instructions).ask(
-          "Read this vaccination record and return the vaccinations in the JSON format described.",
-          with: file.path
-        )
+          Rules:
+          - If a vaccine appears multiple times, include every dose as a separate object.
+          - If the vaccine date is approximate (e.g., only month/year), use the first day of that month.
+          - If vaccine name is in the above list, use EXACTLY the "name" from that list.
+          - If vaccine name is not in the list above, use the name as read from the vaccination pass.
+          - If you are unsure about the date, use null.
+        PROMPT
 
-        if response.nil?
-          Rails.logger.error("extract_vaccinations_from_pass: RubyLLM returned nil response")
-          return []
+        begin
+          Rails.logger.info("extract_vaccinations_from_pass: sending file to RubyLLM model")
+          response = @chat.with_instructions(instructions).ask(
+            "Read this vaccination record and return the vaccinations in the JSON format described.",
+            with: file.path
+          )
+
+          if response.nil?
+            Rails.logger.error("extract_vaccinations_from_pass: RubyLLM returned nil response for blob id=#{attachment.blob.id}")
+            next
+          end
+
+          raw = response.content
+          Rails.logger.info("extract_vaccinations_from_pass: raw response length=#{raw.to_s.length} for blob id=#{attachment.blob.id}")
+          Rails.logger.debug("extract_vaccinations_from_pass: raw response=\n#{raw}")
+
+          # sanitize as before
+          sanitized = raw.to_s.dup
+          sanitized.gsub!(/\A```(?:\w+)?\s*/m, '')
+          sanitized.gsub!(/\s*```\s*\z/m, '')
+          first = sanitized.index(/[\[{]/)
+          last  = sanitized.rindex(/[\]}]/)
+          if first && last && last > first
+            sanitized = sanitized[first..last]
+          end
+
+          Rails.logger.debug("extract_vaccinations_from_pass: sanitized response=\n#{sanitized}")
+
+          data = JSON.parse(sanitized)
+          parsed = data.map do |item|
+            {
+              name: item["name"],
+              description: item["description"],
+              date: item["date"].present? ? Date.parse(item["date"]) : nil
+            }
+          end
+
+          results.concat(parsed)
+        rescue JSON::ParserError => e
+          Rails.logger.error("extract_vaccinations_from_pass: JSON parse error for blob id=#{attachment.blob.id}: #{e.message}")
+          Rails.logger.debug("extract_vaccinations_from_pass: raw response was: #{raw}")
+          next
+        rescue StandardError => e
+          Rails.logger.error("extract_vaccinations_from_pass: error calling RubyLLM for blob id=#{attachment.blob.id}: #{e.message}")
+          Rails.logger.error(e.backtrace.join("\n"))
+          next
         end
-
-        raw = response.content
-        Rails.logger.info("extract_vaccinations_from_pass: raw response length=#{raw.to_s.length}")
-        Rails.logger.debug("extract_vaccinations_from_pass: raw response=\n#{raw}")
-
-        # Clean up responses that are wrapped in Markdown code fences or other
-        # surrounding text. Models often return JSON inside ```json ... ``` blocks
-        # which causes JSON.parse to fail (see logs with leading "```json").
-        sanitized = raw.to_s.dup
-        # Strip common fenced code blocks like ```json or ```
-        sanitized.gsub!(/\A```(?:\w+)?\s*/m, '')
-        sanitized.gsub!(/\s*```\s*\z/m, '')
-        # If the model wrapped the JSON inside extra text, try to extract the
-        # substring from the first JSON opening bracket to the last closing one.
-        first = sanitized.index(/[\[{]/)
-        last  = sanitized.rindex(/[\]}]/)
-        if first && last && last > first
-          sanitized = sanitized[first..last]
-        end
-
-        Rails.logger.debug("extract_vaccinations_from_pass: sanitized response=\n#{sanitized}")
-
-        data = JSON.parse(sanitized)
-        data.map do |item|
-          {
-            name: item["name"],
-            date: item["date"].present? ? Date.parse(item["date"]) : nil
-          }
-        end
-      rescue JSON::ParserError => e
-        Rails.logger.error("extract_vaccinations_from_pass: JSON parse error: #{e.message}")
-        Rails.logger.debug("extract_vaccinations_from_pass: raw response was: #{raw}")
-        []
-      rescue StandardError => e
-        Rails.logger.error("extract_vaccinations_from_pass: error calling RubyLLM: #{e.message}")
-        Rails.logger.error(e.backtrace.join("\n"))
-        []
       end
     end
+
+    results
   rescue StandardError => e
     Rails.logger.error("extract_vaccinations_from_pass: unexpected error: #{e.message}")
     Rails.logger.error(e.backtrace.join("\n"))

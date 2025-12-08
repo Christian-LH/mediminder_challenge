@@ -3,7 +3,7 @@ class Profile < ApplicationRecord
   has_many :user_services
   has_many :services, through: :user_services
 
-  has_one_attached :vaccination_pass, service: :local
+  has_many_attached :vaccination_passes, service: :local
 
   def age
     today = Date.today

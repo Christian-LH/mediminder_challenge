@@ -6,8 +6,8 @@
   <div class="mb-4">
     <%= form_with model: @profile, url: profile_path(@profile), local: true, method: :patch, html: { multipart: true } do |form| %>
       <div class="mb-3">
-        <%= form.label :vaccination_pass, "Vaccination Pass (PDF or Image)", class: "form-label" %>
-        <%= form.file_field :vaccination_pass, accept: 'application/pdf,image/*', class: "form-control" %>
+        <%= form.label :vaccination_passes, "Vaccination Pass (PDF or Image) - you may upload multiple files", class: "form-label" %>
+        <%= form.file_field :vaccination_passes, accept: 'application/pdf,image/*', multiple: true, class: "form-control" %>
       </div>
       <div>
         <%= form.submit "Upload", class: "btn btn-primary" %>
