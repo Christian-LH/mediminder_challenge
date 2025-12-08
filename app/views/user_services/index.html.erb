@@ -22,15 +22,29 @@
     </div>
 
     <!-- SEARCH BAR -->
-    <form action="" method="get" class="mt-3">
-      <div class="input-group">
-        <input type="text" name="query" class="form-control" placeholder="Search services...">
-        <button class="btn btn-primary" type="submit">Search</button>
-      </div>
-    </form>
+      <form action="" method="get" class="mt-3 mb-4">
+        <div class="input-group rounded-pill shadow-sm bg-light px-3 py-2">
+          <span class="input-group-text bg-light border-0 p-0 me-2">
+            <i class="bi bi-search text-muted"></i>
+          </span>
+          <input
+            type="text"
+            name="query"
+            class="form-control border-0 bg-light"
+            placeholder="Search checkups..."
+            value="<%= params[:query] %>"
+          >
+        </div>
+      </form>
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Your checkups</h2>
+
+    <%= link_to "💬 Prioritise by risk",
+            new_profile_risk_assessor_path(@profile),
+            class: "btn btn-outline-primary" %>
+
   </div>
-
-
 
   <!-- DONE SERVICES -->
   <%# <h5 class="text-uppercase text-muted mt-4 mb-2">Completed</h5>

@@ -3,7 +3,8 @@ class UserServicesController < ApplicationController
   before_action :set_user_service, only: [:show, :edit, :update, :destroy]
 
   def index
-    @user_services = UserService.all
+    @user_services = @profile.user_services.includes(:service)
+    # @user_services = UserService.all
 
     # @user_age = current_user.profile.age
     # @user_services = @user_services.joins(:service).where(services: { gender_restriction: current_user.profile.gender })
@@ -37,6 +38,8 @@ class UserServicesController < ApplicationController
   end
 
   def set_profile
-    @profile = Profile.find(params[:profile_id])
+    # earlier stage without User-Scope:
+    # @profile = Profile.find(params[:profile_id])
+    @profile = current_user.profile
   end
 end

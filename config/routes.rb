@@ -13,6 +13,8 @@ Rails.application.routes.draw do
   # resources :users do
     resources :profiles, only: [:new, :create, :edit, :update] do
       resources :user_services, only: [:index, :show, :edit, :update, :destroy]
+
+      resource :risk_assessor, only: [:new, :create]
     end
   # end
 end
