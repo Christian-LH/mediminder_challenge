@@ -1,25 +1,52 @@
-<h2>Sign up</h2>
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
 
-<%= simple_form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
-  <%= f.error_notification %>
+      <!-- Logo / Brand -->
+      <div class="text-center mb-4">
+        <h2 class="fw-bold text-primary">MediMinder</h2>
+        <p class="text-muted mb-0">Create your account</p>
+        <p class="text-muted">Stay ahead of your preventive health</p>
+      </div>
 
-  <div class="form-inputs">
-    <%= f.input :email,
-                required: true,
-                autofocus: true,
-                input_html: { autocomplete: "email" }%>
-    <%= f.input :password,
-                required: true,
-                hint: ("#{@minimum_password_length} characters minimum" if @minimum_password_length),
-                input_html: { autocomplete: "new-password" } %>
-    <%= f.input :password_confirmation,
-                required: true,
-                input_html: { autocomplete: "new-password" } %>
+      <!-- SIGN UP CARD -->
+      <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+
+          <h2 class="h4 mb-4 text-center">Sign up</h2>
+
+          <%= simple_form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+            <%= f.error_notification %>
+
+            <div class="form-inputs mb-3">
+              <%= f.input :email,
+                          required: true,
+                          autofocus: true,
+                          input_html: { autocomplete: "email", class: "form-control" } %>
+
+              <%= f.input :password,
+                          required: true,
+                          hint: ("#{@minimum_password_length} characters minimum" if @minimum_password_length),
+                          input_html: { autocomplete: "new-password", class: "form-control" } %>
+
+              <%= f.input :password_confirmation,
+                          required: true,
+                          input_html: { autocomplete: "new-password", class: "form-control" } %>
+            </div>
+
+            <div class="d-grid">
+              <%= f.button :submit, "Sign up", class: "btn btn-primary btn-lg" %>
+            </div>
+          <% end %>
+
+        </div>
+      </div>
+
+      <!-- Bottom Links -->
+      <div class="text-center mt-3">
+        <%= render "devise/shared/links" %>
+      </div>
+
+    </div>
   </div>
-
-  <div class="form-actions">
-    <%= f.button :submit, "Sign up" %>
-  </div>
-<% end %>
-
-<%= render "devise/shared/links" %>
+</div>
