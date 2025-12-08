@@ -1,7 +1,56 @@
 class ProfilesController < ApplicationController
 
-  # when creating a new profile, it should automatically also create the user_services that belong to the profile (so for the correct gender and age group)
-  # when the profile and the user_services are created, the user should be redirected to the user_services index page for that profile
+  VACC_SERVICES = [
+    # --- Vaccinations (Adults, STIKO Recommendations) ---
+    {
+      name: "Tetanus & Diphtheria (Booster)",
+      description: "Regular booster every 10 years. At least once in adulthood combined with pertussis (Tdap).",
+      category: "vaccination",
+      gender_restriction: "any",
+      recommended_start_age: 18,
+      frequency_months: 120
+    },
+    {
+      name: "Measles Vaccination",
+      description: "Single vaccination for all adults born after 1970 with unclear vaccination status or only one childhood dose.",
+      category: "vaccination",
+      gender_restriction: "any",
+      recommended_start_age: 18,
+      frequency_months: nil
+    },
+    {
+      name: "Flu Vaccination (Influenza)",
+      description: "Annual vaccination in autumn (Oct/Nov). Standard recommendation from age 60, plus pregnant women and chronically ill persons.",
+      category: "vaccination",
+      gender_restriction: "any",
+      recommended_start_age: 60,
+      frequency_months: 12
+    },
+    {
+      name: "Pneumococcal Vaccination",
+      description: "Protection against pneumonia. Standard vaccination from age 60.",
+      category: "vaccination",
+      gender_restriction: "any",
+      recommended_start_age: 60,
+      frequency_months: nil
+    },
+    {
+      name: "Shingles (Herpes Zoster)",
+      description: "Two doses 2–6 months apart. Standard recommendation from age 60 (from 50 with underlying conditions).",
+      category: "vaccination",
+      gender_restriction: "any",
+      recommended_start_age: 60,
+      frequency_months: nil
+    },
+    {
+      name: "COVID-19 Vaccination",
+      description: "Annual booster in autumn for adults over 60 and risk groups. Basic immunity (3 exposures) recommended for all adults.",
+      category: "vaccination",
+      gender_restriction: "any",
+      recommended_start_age: 60,
+      frequency_months: 12
+    }
+  ]
 
   def new
     if current_user.profile.present?
@@ -37,10 +86,9 @@ class ProfilesController < ApplicationController
       # create user services only if none exist yet
       create_user_services_for(@profile) if @profile.user_services.empty?
 
-      # If a vaccination pass was uploaded, analyse it with RubyLLM
       if params[:profile][:vaccination_pass].present?
         vaccinations = extract_vaccinations_from_pass(@profile)
-        @profile.mark_vaccinations_as_completed!(vaccinations)
+        Rails.logger.info("ProfilesController#update: vaccinations extracted: #{vaccinations.inspect}")
       end
 
       redirect_to profile_user_services_path(@profile)
@@ -81,10 +129,12 @@ class ProfilesController < ApplicationController
 
   def extract_vaccinations_from_pass(profile)
     return [] unless profile.vaccination_pass.attached?
+    Rails.logger.info("extract_vaccinations_from_pass: starting for profile=#{profile.id}")
     profile.vaccination_pass.open(tmpdir: Dir.tmpdir) do |file|
-      chat = RubyLLM.chat(model: "gpt-4o")
+      Rails.logger.info("extract_vaccinations_from_pass: opened file at=#{file.path}")
+      @chat = RubyLLM.chat(model: "gpt-4o")
 
-      system_prompt = <<-PROMPT
+      instructions = <<-PROMPT
         You are an assistant for a German preventive health app.
         You read German vaccination passes ("Impfausweis" / "Impfpass") and extract
         the vaccinations that a single person has already received.
@@ -93,42 +143,75 @@ class ProfilesController < ApplicationController
 
         [
           {
-            "name": "short German vaccine name (e.g. 'Tetanus', 'MMR', 'FSME')",
+            "name": "short vaccine name",
             "date": "YYYY-MM-DD or null if you cannot read the exact date"
           }
         ]
 
+        If the vaccination is in the following list, use EXACTLY the "name" from this list: #{VACC_SERVICES}
+
+        If it is a vaccination NOT in the above list, still include it with the name as read from the pass.
+
         Rules:
-        - Ignore entries that are clearly not vaccinations.
         - If a vaccine appears multiple times, include every dose as a separate object.
         - If you are unsure about the date, use null.
       PROMPT
       # when it can't read one vaccination, it should return something so that the user knows that
 
-      # Set the system prompt
-      chat.with_instructions(system_prompt, replace: true)
+      # User message & system_promt + image file
+      begin
+        Rails.logger.info("extract_vaccinations_from_pass: sending file to RubyLLM model")
+        response = @chat.with_instructions(instructions).ask(
+          "Read this vaccination record and return the vaccinations in the JSON format described.",
+          with: file.path
+        )
 
-      # User message + image file
-      response = chat.ask(
-        "Read this vaccination record and return the vaccinations to me in the JSON format described.",
-        with: file.path
-      )
+        if response.nil?
+          Rails.logger.error("extract_vaccinations_from_pass: RubyLLM returned nil response")
+          return []
+        end
 
-      raw = response.content
+        raw = response.content
+        Rails.logger.info("extract_vaccinations_from_pass: raw response length=#{raw.to_s.length}")
+        Rails.logger.debug("extract_vaccinations_from_pass: raw response=\n#{raw}")
 
-      data = JSON.parse(raw)
-      data.map do |item|
-        {
-          name: item["name"],
-          date: item["date"].present? ? Date.parse(item["date"]) : nil
-        }
+        # Clean up responses that are wrapped in Markdown code fences or other
+        # surrounding text. Models often return JSON inside ```json ... ``` blocks
+        # which causes JSON.parse to fail (see logs with leading "```json").
+        sanitized = raw.to_s.dup
+        # Strip common fenced code blocks like ```json or ```
+        sanitized.gsub!(/\A```(?:\w+)?\s*/m, '')
+        sanitized.gsub!(/\s*```\s*\z/m, '')
+        # If the model wrapped the JSON inside extra text, try to extract the
+        # substring from the first JSON opening bracket to the last closing one.
+        first = sanitized.index(/[\[{]/)
+        last  = sanitized.rindex(/[\]}]/)
+        if first && last && last > first
+          sanitized = sanitized[first..last]
+        end
+
+        Rails.logger.debug("extract_vaccinations_from_pass: sanitized response=\n#{sanitized}")
+
+        data = JSON.parse(sanitized)
+        data.map do |item|
+          {
+            name: item["name"],
+            date: item["date"].present? ? Date.parse(item["date"]) : nil
+          }
+        end
+      rescue JSON::ParserError => e
+        Rails.logger.error("extract_vaccinations_from_pass: JSON parse error: #{e.message}")
+        Rails.logger.debug("extract_vaccinations_from_pass: raw response was: #{raw}")
+        []
+      rescue StandardError => e
+        Rails.logger.error("extract_vaccinations_from_pass: error calling RubyLLM: #{e.message}")
+        Rails.logger.error(e.backtrace.join("\n"))
+        []
       end
     end
-    rescue JSON::ParserError => e
-      Rails.logger.error("Failed to parse vaccination JSON from LLM: #{e.message}")
-      []
-    rescue StandardError => e
-      Rails.logger.error("Error while analysing vaccination pass: #{e.message}")
-      []
+  rescue StandardError => e
+    Rails.logger.error("extract_vaccinations_from_pass: unexpected error: #{e.message}")
+    Rails.logger.error(e.backtrace.join("\n"))
+    []
   end
 end

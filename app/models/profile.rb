@@ -3,7 +3,7 @@ class Profile < ApplicationRecord
   has_many :user_services
   has_many :services, through: :user_services
 
-  has_one_attached :vaccination_pass
+  has_one_attached :vaccination_pass, service: :local
 
   def age
     today = Date.today
@@ -13,14 +13,25 @@ class Profile < ApplicationRecord
   end
 
   def mark_vaccinations_as_completed!(vaccinations)
-    vaccinations.each do |vacc|
-      service = Service.find(category: "vaccination", name: vacc[:name])
-      next unless service
+    processed = 0
+    Array(vaccinations).each do |vacc|
+      next unless vacc && vacc[:name].present?
 
-      us = user_service.find_or_initialize_by(service: service)
+      service = Service.find_by(category: "vaccination", name: vacc[:name])
+
+      # create service if it doesn't exist (imported from vaccination pass)
+      unless service
+        service = Service.create!(category: "vaccination", name: vacc[:name], description: (vacc[:description] || "Imported from vaccination pass"))
+      end
+
+      us = user_services.find_or_initialize_by(service: service)
       us.completed_at = vacc[:date]
       us.status = "done"
+      us.due_date ||= (vacc[:date] || Date.today)
       us.save!
+      processed += 1
     end
+
+    processed
   end
 end
