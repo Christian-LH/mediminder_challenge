@@ -11,7 +11,7 @@
         </p>
 
        <div class="d-flex flex-column flex-sm-row gap-2 justify-content-center justify-content-lg-start">
-        <% if user_signed_in? && current_user.profile.present? %>
+        <% if user_signed_in? && current_user.profiles.present? %>
           <%= link_to "View your upcoming checkups",
                       profile_user_services_path(current_profile),
                       class: "btn btn-primary btn-lg" %>
