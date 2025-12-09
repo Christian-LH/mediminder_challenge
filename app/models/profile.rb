@@ -4,6 +4,9 @@ class Profile < ApplicationRecord
   has_many :services, through: :user_services
 
   has_many_attached :vaccination_passes, service: :local
+  validates :gender, presence: true
+  validates :birthday, presence: true
+  validates :user_name, presence: true
 
   def age
     today = Date.today

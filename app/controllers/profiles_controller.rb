@@ -50,11 +50,18 @@ class ProfilesController < ApplicationController
       frequency_months: 12
     }
   ]
+  before_action :set_profile, only: [:show, :edit, :update]
+  # when creating a new profile, it should automatically also create the user_services that belong to the profile (so for the correct gender and age group)
+  # when the profile and the user_services are created, the user should be redirected to the user_services index page for that profile
+
+  def index
+    @user_profiles = Profile.where(user: current_user)
+  end
+
+  def show
+  end
 
   def new
-    if current_user.profile.present?
-      redirect_to profile_user_services_path(current_user.profile)
-    end
     @profile = Profile.new
   end
 
@@ -62,25 +69,18 @@ class ProfilesController < ApplicationController
     @profile = Profile.new(profile_params)
     @profile.user = current_user
 
-    begin
-      Profile.transaction do
-        @profile.save!
-        create_user_services_for(@profile)
-      end
+    if @profile.save
+      create_user_services_for(@profile)
       redirect_to profile_user_services_path(@profile)
-    rescue ActiveRecord::RecordInvalid => e
-      Rails.logger.error("Profile creation failed: #{e.message}")
+    else
       render :new, status: :unprocessable_entity
     end
   end
 
   def edit
-    @profile = Profile.find(params[:id])
   end
 
   def update
-    @profile = Profile.find(params[:id])
-
     if @profile.update(profile_params)
       # create user services only if none exist yet
       create_user_services_for(@profile) if @profile.user_services.empty?
@@ -101,7 +101,11 @@ class ProfilesController < ApplicationController
   private
 
   def profile_params
-    params.require(:profile).permit(:gender, :birthday, vaccination_passes: [])
+    params.require(:profile).permit(:gender, :birthday, :user_name, :icon, vaccination_passes: [])
+  end
+
+  def set_profile
+    @profile = Profile.find(params[:id])
   end
 
   def create_user_services_for(profile)

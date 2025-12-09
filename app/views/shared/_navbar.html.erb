@@ -7,7 +7,7 @@
     <% end %>
 
     <!-- Burger Button -->
-    <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#rightMenu">
+    <button class="navbar-toggler rounded-5" type="button" data-bs-toggle="offcanvas" data-bs-target="#rightMenu">
       <span class="navbar-toggler-icon"></span>
     </button>
 
@@ -22,7 +22,11 @@
         <ul class="navbar-nav">
 
           <li class="nav-item">
-            <%= link_to "Profil", root_path, class: "nav-link" %>
+            <% if current_profile %>
+              <%= link_to "Profile", profile_path(current_profile), class: "nav-link" %>
+            <% else %>
+              <%= link_to "Create new profile", new_profile_path, class: "nav-link" %>
+            <% end %>
           </li>
 
           <li class="nav-item">
