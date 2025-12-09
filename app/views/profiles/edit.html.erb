@@ -1,7 +1,6 @@
 <div class="container my-5">
   <div class="d-flex flex-column justify-content-center align-items-center text-center mb-4">
     <h1>Upload your vaccination pass</h1>
-    <p>this helps MediMinder to personalize the services even further*</p>
   </div>
   <div class="mb-4">
     <%= form_with model: @profile, url: profile_path(@profile), local: true, method: :patch, html: { multipart: true } do |form| %>
@@ -9,11 +8,11 @@
         <%= form.label :vaccination_passes, "Vaccination Pass (PDF or Image) - you may upload multiple files", class: "form-label" %>
         <%= form.file_field :vaccination_passes, accept: 'application/pdf,image/*', multiple: true, class: "form-control" %>
       </div>
-      <div>
-        <%= form.submit "Upload", class: "btn btn-primary" %>
+      <div class="d-flex justify-content-center">
+        <%= form.submit "Upload", class: "btn btn-primary", style: "width: 200px;" %>
       </div>
     <% end %>
   </div>
 
-  <p>*Your vaccination data is interpreted with the help of an AI system. Although we aim for accuracy, the output may occasionally be incorrect or incomplete. Please verify all information yourself.</p>
+  <p>Your vaccination data is interpreted with the help of an AI system. Although we aim for accuracy, the output may occasionally be incorrect or incomplete. Please verify all information yourself.</p>
 </div>
