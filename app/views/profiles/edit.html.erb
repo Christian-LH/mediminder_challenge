@@ -1,18 +1,23 @@
-<div class="container my-5">
-  <div class="d-flex flex-column justify-content-center align-items-center text-center mb-4">
-    <h1>Upload your vaccination pass</h1>
+<div class="container my-4" style="position:relative;">
+  <%= link_to "⬅ Back",
+                      profile_user_services_path(@profile),
+                      class: "btn btn-outline-secondary btn-sm me-3 mb-2" %>
+  <%# <span class="loader" style="position:absolute; margin:auto"></span> %>
+  <div class="d-flex flex-column justify-content-center align-items-center text-center my-2">
+    <h1>Vaccination checker</h1>
   </div>
-  <div class="mb-4">
+  <p>Upload your vaccination certificate (image or PDF) to further personalize your checkups.*</p>
+  <div class="mb-4 border p-4 rounded" style="background-color: #f8f9faff;">
     <%= form_with model: @profile, url: profile_path(@profile), local: true, method: :patch, html: { multipart: true } do |form| %>
       <div class="mb-3">
-        <%= form.label :vaccination_passes, "Vaccination Pass (PDF or Image) - you may upload multiple files", class: "form-label" %>
-        <%= form.file_field :vaccination_passes, accept: 'application/pdf,image/*', multiple: true, class: "form-control" %>
+        <%# <%= form.label :vaccination_passes, "You may upload multiple files", class: "form-label" %>
+        <%= form.file_field :vaccination_passes, accept: 'application/pdf,image/*', multiple: true, class: "form-control-sm border-secondary" %>
       </div>
       <div class="d-flex justify-content-center">
-        <%= form.submit "Upload", class: "btn btn-primary", style: "width: 200px;" %>
+        <%= form.submit "Check Vaccinations", class: "btn btn-primary", style: "width: 200px;" %>
       </div>
     <% end %>
   </div>
 
-  <p>Your vaccination data is interpreted with the help of an AI system. Although we aim for accuracy, the output may occasionally be incorrect or incomplete. Please verify all information yourself.</p>
+  <p>*Your vaccination data is interpreted with the help of an AI system. Although we aim for accuracy, the output may occasionally be incorrect or incomplete. Please verify all information yourself.</p>
 </div>
