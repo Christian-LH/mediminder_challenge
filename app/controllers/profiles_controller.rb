@@ -1,7 +1,6 @@
 class ProfilesController < ApplicationController
 
   VACC_SERVICES = [
-    # --- Vaccinations (Adults, STIKO Recommendations) ---
     {
       name: "Tetanus & Diphtheria (Booster)",
       description: "Regular booster every 10 years. At least once in adulthood combined with pertussis (Tdap).",
@@ -68,7 +67,7 @@ class ProfilesController < ApplicationController
         @profile.save!
         create_user_services_for(@profile)
       end
-      redirect_to profile_user_services_path(@profile) # , notice: "Profile was successfully created."
+      redirect_to profile_user_services_path(@profile)
     rescue ActiveRecord::RecordInvalid => e
       Rails.logger.error("Profile creation failed: #{e.message}")
       render :new, status: :unprocessable_entity
@@ -140,30 +139,37 @@ class ProfilesController < ApplicationController
         @chat = RubyLLM.chat(model: "gpt-4o")
 
         instructions = <<-PROMPT
-          You are an assistant for a German preventive health app.
-          You read German vaccination passes ("Impfausweis" / "Impfpass") and extract
-          the vaccinations that a single person has already received.
+          You extract vaccinations from a German vaccination pass ("Impfausweis").
 
-          Return ONLY valid JSON (no Markdown, no extra text) in this exact format:
+          Return ONLY valid JSON (no text outside the array):
 
           [
-            {
-              "name": "short vaccine name",
-              "description": "short description of what the vaccine is about",
-              "date": "YYYY-MM-DD or null if you cannot read the exact date"
-            }
+            { "name": "...", "description": "...", "date": "YYYY-MM-DD or null" }
           ]
 
-          If the vaccination is in the following list, use EXACTLY the "name" from this list: #{VACC_SERVICES}
+          VACCINE NAME RULES
+          - Use EXACT names from this list when applicable: #{VACC_SERVICES}
+          - Brand names (e.g. Priorix, MMR, Infanrix, Boostrix, Comirnaty, Spikevax, etc.) must be mapped to their underlying diseases. Example: Priorix → Measles, Mumps, Rubella.
+          - For combination vaccines: output ONE object per mapped disease/service (same date).
+          - If a vaccine cannot be mapped to the list, include it using the name from the pass (e.g. FSME, Typhus, Gelbfieber).
 
-          If it is a vaccination NOT in the above list, still include it with the name as read from the pass.
+          MULTIPLE DOSES
+          - Output EVERY dose as a separate object.
+          - Dose naming:
+            - First dose: use the normalised name as above.
+            - Additional doses of the same vaccine (sorted by date): append "(2)", "(3)", etc.
+            - Apply numbering also for vaccines not in the list.
 
-          Rules:
-          - If a vaccine appears multiple times, include every dose as a separate object.
-          - If the vaccine date is approximate (e.g., only month/year), use the first day of that month.
-          - If vaccine name is in the above list, use EXACTLY the "name" from that list.
-          - If vaccine name is not in the list above, use the name as read from the vaccination pass.
-          - If you are unsure about the date, use null.
+          DATE RULES
+          - If only month/year is readable: use the first day of that month (YYYY-MM-01).
+          - If unreadable: use null.
+
+          DESCRIPTION
+          - Short description of the disease(s) targeted (e.g. "Vaccine against measles").
+
+          ALWAYS
+          - Include ALL vaccinations found in the pass — never drop an entry.
+          - Never output Markdown or explanations.
         PROMPT
 
         begin
@@ -223,3 +229,91 @@ class ProfilesController < ApplicationController
     []
   end
 end
+
+# longer but more reliable instructions for LLM:
+  # You are an assistant for a German preventive health app.
+  # You read German vaccination passes ("Impfausweis" / "Impfpass") and extract
+  # the vaccinations that a single person has already received.
+
+  # Return ONLY valid JSON (no Markdown, no extra text) in this exact format:
+
+  # [
+  #   {
+  #     "name": "short vaccine name",
+  #     "description": "short description of what the vaccine is about",
+  #     "date": "YYYY-MM-DD or null if you cannot read the exact date"
+  #   }
+  # ]
+
+  # You have the following list of standardised vaccine service names:
+  # #{VACC_SERVICES}
+
+  # YOUR GOAL
+  # - Extract EVERY vaccination you can identify from the vaccination pass.
+  # - The list above is ONLY for normalising names. It is NOT a filter.
+  # - Do NOT skip or drop a vaccination just because it is not in the list.
+
+  # INCLUSION RULES (VERY IMPORTANT)
+  # - For every vaccination entry you can read (brand, disease name, combination, etc.), create at least one JSON object.
+  # - Do not apply any medical judgement (e.g. age, importance, “only basic vaccines”). If it appears in the pass and you can recognise it, you must output it.
+  # - This includes travel vaccines, special vaccines, or any others that are not part of the standard list (e.g. FSME, Gelbfieber, Typhus, Tollwut, Herpes zoster, etc.).
+
+  # MAPPING & NORMALISATION RULES
+  # 1. Matching to standard services
+  #    - Try to map each vaccination to the MOST APPROPRIATE existing service name from the list above.
+  #    - If the entry is a BRAND NAME (e.g. "Priorix", "M-M-RVAXPRO", "Infanrix", "Infanrix hexa", "Boostrix", "Comirnaty", "Spikevax", etc.), infer which diseases it protects against.
+  #    - If there is a semantically equivalent service in the list (e.g. Measles, Mumps, Rubella, Tetanus, Diphtheria, Pertussis, Polio, HPV, Hepatitis B, Covid-19, etc.), use EXACTLY that name from the list instead of the brand name.
+
+  # 2. Combination vaccines
+  #    - For combination vaccines (e.g. MMR, Priorix, Infanrix hexa, 6-fach-Impfung, Tdap, etc.):
+  #      - Return ONE JSON OBJECT PER DISEASE / COMPONENT that appears in the list.
+  #      - Use the SAME DATE for all components of the combination.
+  #      - Example: If the pass shows "Priorix", and the list contains services for Measles, Mumps and Rubella, output three separate objects with the names from the list (e.g. "Measles Vaccination", "Mumps Vaccination", "Rubella Vaccination") instead of a single "Priorix" entry.
+  #      - Example: If the pass shows "Boostrix" and the list contains a combined "Tetanus & Diphtheria (Booster)" service, use EXACTLY "Tetanus & Diphtheria (Booster)" as the name, not "Boostrix".
+
+  # 3. Synonyms and abbreviations
+  #    - Treat common abbreviations as synonyms (e.g. "MMR", "M-M-R", "Masern-Mumps-Röteln").
+  #    - Treat German and English disease names as equivalent (e.g. "Masern" = "Measles", "Röteln" = "Rubella", "Keuchhusten" = "Pertussis").
+  #    - If the vaccine name on the pass is a known abbreviation, brand, or short form of a vaccine in the list, use EXACTLY the matching name from the list.
+
+  # 4. Vaccines NOT in the list
+  #    - If you cannot reasonably map a vaccination to any entry in the list, STILL INCLUDE IT.
+  #    - In that case:
+  #      - Use the name as written on the vaccination pass (or a clear short form, e.g. "FSME", "Gelbfieber", "Typhus").
+  #      - Do NOT try to force it into an unrelated name from the list.
+  #    - Example: If the pass shows "FSME" and there is no tick-borne encephalitis service in the list, output an entry with "name": "FSME".
+
+  # MULTIPLE DOSES OF THE SAME VACCINE (IMPORTANT)
+  # - NEVER merge or deduplicate multiple doses.
+  # - If the same vaccine (same mapped name) appears more than once with different dates, output ONE OBJECT PER DOSE.
+  # - Naming pattern per vaccine name:
+  #   - For the FIRST dose of a vaccine that is in the standard list, use the name EXACTLY as in the list.
+  #   - For each ADDITIONAL dose of the same vaccine, append a running number in brackets to the name.
+  #     - Example (COVID-19 in the list as "COVID-19 Vaccination"):
+  #       - 1st dose (earliest date): "name": "COVID-19 Vaccination"
+  #       - 2nd dose: "name": "COVID-19 Vaccination (2)"
+  #       - 3rd dose: "name": "COVID-19 Vaccination (3)"
+  #     - Example (Measles Vaccination):
+  #       - 1st dose: "Measles Vaccination"
+  #       - 2nd dose: "Measles Vaccination (2)"
+  # - Apply the same pattern to vaccines NOT in the list as well (using their pass name):
+  #   - 1st dose: "FSME"
+  #   - 2nd dose: "FSME (2)"
+  #   - 3rd dose: "FSME (3)"
+  # - The numbering is per vaccine name (per disease/component), ordered by date from earliest (1) to latest.
+
+  # DATE RULES
+  # - If the vaccination is given multiple times (series / boosters), include EVERY DOSE as a separate object (with the naming and numbering rules above).
+  # - If the date is approximate (e.g. only month/year), use the first day of that month: "YYYY-MM-01".
+  # - If you truly cannot read or infer the date, use null.
+
+  # DESCRIPTION FIELD
+  # - The "description" field should be a brief summary of the vaccine’s purpose in plain language.
+  #   - Example: "Vaccine against measles", "Booster for tetanus and diphtheria", "Vaccine against tick-borne encephalitis (FSME)".
+
+  # REMINDERS
+  # - ALWAYS return a JSON ARRAY of vaccine objects.
+  # - NEVER output Markdown, comments, or any extra text outside the JSON.
+  # - ALWAYS include:
+  #   - Vaccines that match the standard list (with the normalised name and numbered doses).
+  #   - Vaccines that do not match the list (with the name from the pass and numbered doses, if multiple).
