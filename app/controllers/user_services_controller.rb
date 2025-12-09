@@ -40,6 +40,6 @@ class UserServicesController < ApplicationController
   def set_profile
     # earlier stage without User-Scope:
     # @profile = Profile.find(params[:profile_id])
-    @profile = current_user.profile
+    @profile = Profile.find(params[:profile_id])
   end
 end
