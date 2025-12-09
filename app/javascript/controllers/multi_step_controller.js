@@ -1,18 +1,27 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["genderStep", "dateStep", "nameStep"]
+  static targets = ["progressBar", "genderStep", "dateStep", "nameStep"]
 
-  nextStep() {
-    const selected = this.genderStepTarget.querySelector('input[name="profile[gender]"]:checked')
-    if (selected) {
-      this.genderStepTarget.classList.add("d-none")
-      this.dateStepTarget.classList.remove("d-none")
-    } else {
-      alert("Please choose a gender first.")
-    }
+
+  // saves steps order
+  connect() {
+    this.steps = [this.genderStepTarget, this.dateStepTarget, this.nameStepTarget]
+    this.currentStep = 0
+    this.updateProgress()
   }
 
+  // Step 1 Gender
+  nextStep() {
+    const selected = this.genderStepTarget.querySelector('input[name="profile[gender]"]:checked')
+    if (!selected) {
+      alert("Please choose a gender first.")
+      return
+    }
+    this._goToStep(1)
+  }
+
+  // Step 2 Birthday
   nextStep2() {
     // get year / month / date
     const year = this.dateStepTarget.querySelector('[name="profile[birthday(1i)]"]').value
@@ -39,8 +48,25 @@ export default class extends Controller {
       return
     }
 
-    this.dateStepTarget.classList.add("d-none")
-    this.nameStepTarget.classList.remove("d-none")
+    this._goToStep(2)
   }
 
+   // change steps
+  _goToStep(stepIndex) {
+    if (stepIndex < 0 || stepIndex >= this.steps.length) return
+
+    this.steps[this.currentStep].classList.add("d-none")
+    this.steps[stepIndex].classList.remove("d-none")
+    this.currentStep = stepIndex
+    this.updateProgress()
+  }
+
+  // Update Progressbar
+  updateProgress() {
+    if (!this.hasProgressBarTarget) return
+
+    const progressPercent = ((this.currentStep + 1) / this.steps.length) * 100
+    this.progressBarTarget.style.width = `${progressPercent}%`
+    this.progressBarTarget.setAttribute("aria-valuenow", progressPercent)
+  }
 }

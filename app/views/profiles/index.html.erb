@@ -1,46 +1,46 @@
 <div class="d-flex justify-content-center align-items-start min-vh-100 pt-5">
   <div class="w-100" style="max-width: 480px;">
 
+    <%= link_to "⬅ Back", profile_path(current_profile), class: "text-decoration-none text-secondary link-dark" %>
+
     <!-- Greeting -->
-    <div class="text-center mb-4">
-      <h3 class="mb-3">Hello <%= current_profile.user_name %></h3>
-      <p class="text-muted">Here are all your profiles:</p>
+    <div class="d-flex align-items-center my-4 gap-3">
+      <% icon_class = current_profile.icon.nil? ? @icons[rand(1..9)] : @icons[current_profile.icon] %>
+      <span class="btn btn-secondary rounded-circle d-inline-flex justify-content-center align-items-center" style="width: 60px; height: 60px;">
+        <i class="<%= icon_class %> fa-2x"></i>
+      </span>
+      <h3 class="fw-semibold mb-0">Hello <%= current_profile.user_name %>!</h3>
     </div>
+
+    <p>Here are all your profiles:</p>
 
     <!-- Add new profile button -->
     <div class="d-grid mb-4">
       <%= link_to "+ Add a new profile",
                   new_profile_path,
-                  class: "btn btn-outline-primary btn-lg py-3" %>
+                  class: "btn btn-outline-primary btn-lg py-3 rounded-5" %>
     </div>
 
     <!-- List of profiles -->
     <div class="d-grid gap-3">
       <% @user_profiles.each do |user_profile| %>
+        <%= link_to profile_user_services_path(user_profile), class: "text-decoration-none" do %>
+          <div class="d-flex align-items-center mb-1 p-4 rounded-5 shadow bg-white">
+            <% icon_class = user_profile.icon.nil? ? @icons[rand(1..9)] : @icons[user_profile.icon] %>
 
-        <!-- current profile -->
-        <% if user_profile == current_profile %>
-          <%= link_to profile_user_services_path(user_profile), class: "text-decoration-none" do %>
-            <div class="card shadow-sm">
-              <div class="card-body">
-                <h5 class="card-title mb-2"><%= user_profile.user_name %> <em>(current)</em></h5>
-                <p class="card-text text-muted mb-0">Birthday: <%= user_profile.birthday.strftime("%B %d, %Y") if user_profile.birthday %></p>
-              </div>
+            <span class="btn btn-primary rounded-circle d-inline-flex justify-content-center align-items-center me-3" style="width: 50px; height: 50px;">
+              <i class="<%= icon_class %> fs-4"></i>
+            </span>
+
+            <div>
+              <h6 class="fw-semibold mb-1"><%= user_profile.user_name %> <%= "(current)" if user_profile == current_profile %></h6>
+              <p class="mb-0 small text-secondary">Birthday: <%= user_profile.birthday.strftime("%B %d, %Y") if user_profile.birthday %></p>
             </div>
-          <% end %>
-        <!-- other profiles -->
-        <% else %>
-          <%= link_to profile_user_services_path(user_profile), class: "text-decoration-none" do %>
-            <div class="card shadow-sm">
-              <div class="card-body">
-                <h5 class="card-title mb-2"><%= user_profile.user_name %></h5>
-                <p class="card-text text-muted mb-0">Birthday: <%= user_profile.birthday.strftime("%B %d, %Y") if user_profile.birthday %></p>
-              </div>
-            </div>
-          <% end %>
+          </div>
         <% end %>
       <% end %>
     </div>
+
 
   </div>
 </div>
