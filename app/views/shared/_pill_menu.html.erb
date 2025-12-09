@@ -1,9 +1,9 @@
 <!-- Floating Pill Button -->
-<% if user_signed_in? && current_user.profile.present? %>
-  <div class="position-fixed bottom-0 start-50 translate-middle-x mb-4" style="z-index: 1030;">
-    <%= link_to profile_user_services_path(current_user.profile),
+<%# <% if user_signed_in? && current_user.profile.present? %>
+  <%# <div class="position-fixed bottom-0 start-50 translate-middle-x mb-4" style="z-index: 1030;">
+  <%#   <%= link_to profile_user_services_path(current_user.profile),
                 class: "btn btn-primary rounded-pill px-4 py-2 shadow-sm" do %>
-      Next checkups
-    <% end %>
-  </div>
-<% end %>
+     <%#  Next checkups
+<%#     <% end %>
+ <%#  </div>
+<%# <% end %>

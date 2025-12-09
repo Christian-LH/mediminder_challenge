@@ -1,0 +1,68 @@
+<%# Bootstrap container %>
+<div class="container py-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Risk Assessor</h2>
+    <%= link_to "Back to my services",
+                profile_user_services_path(@profile),
+                class: "btn btn-outline-secondary btn-sm" %>
+  </div>
+
+  <p class="text-muted mb-3">
+    Prioritise your preventive care.
+  </p>
+
+  <%# get question prompt from %>
+
+  <div class="card mb-4">
+    <div class="card-body">
+      <div class="mb-1">
+        <%= simple_format(@question_prompt) %>
+      </div>
+    </div>
+  </div>
+
+  <%# get and show LLM recommendation %>
+
+  <% if @llm_response.present? %>
+
+  <%# display in message like container %>
+
+  <div class="bg-primary text-white rounded-5 p-4 mb-4 border-0 ms-auto col-md-9 col-lg-7">
+
+    <div class="white-link-pills">
+
+      <%# to be checked for compliance "with conventions" with Olli %>
+
+      <%= @llm_response.html_safe %>
+    </div>
+  </div>
+
+  <% end %>
+
+  <div class="card">
+
+    <%# Card for users free-text %>
+    <div class="card-body">
+      <%= form_with url: new_profile_risk_assessor_path(@profile),
+                    method: :get,
+                    local: true do |f| %>
+
+        <%# Submit form to RiskAssessorsController#new (GET) %>
+
+        <div class="mb-3">
+          <%= f.label :message, "Your answer", class: "form-label" %>
+          <%# Textarea for user %>
+          <%= f.text_area :message,
+                          rows: 3,
+                          class: "form-control",
+                          value: params[:message] %>
+        </div>
+        <div class="d-flex justify-content-end">
+          <%# Submit button that triggers the LLM call through the controller %>
+          <%= f.submit "Send", class: "btn btn-primary" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
