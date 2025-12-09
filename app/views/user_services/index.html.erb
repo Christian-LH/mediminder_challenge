@@ -33,17 +33,17 @@
 
 
   <!-- DONE SERVICES -->
-  <%# <h5 class="text-uppercase text-muted mt-4 mb-2">Completed</h5>
+  <h5 class="text-uppercase text-muted mt-4 mb-2">Completed</h5>
   <% @user_services.where(status: "done").each do |done_user_service| %>
-    <%# <%= link_to profile_user_service_path(@profile, done_user_service), class: "text-decoration-none" do %>
-      <%# <div class="d-flex align-items-center mb-3 p-3 rounded shadow-sm bg-success text-white"> %>
-        <%# <div> %>
-          <%# <h6 class="fw-bold mb-1"><%= done_user_service.service.name %></h6>
-          <%# <p class="mb-0 small"><%= done_user_service.completed_at %></p>
-        <%# </div>
+    <%= link_to profile_user_service_path(@profile, done_user_service), class: "text-decoration-none", data: { turbo: false } do %>
+      <div class="d-flex align-items-center mb-3 p-3 rounded shadow-sm bg-success text-white">
+        <div>
+          <h6 class="fw-bold mb-1"><%= done_user_service.service.name %></h6>
+          <p class="mb-0 small"><%= done_user_service.completed_at %></p>
+        </div>
       </div>
     <% end %>
-  <%# <% end %>
+  <% end %>
 
 
 
@@ -51,7 +51,7 @@
   <h4 class="text-muted mt-4 mb-3">Next checkups</h4>
 
   <% @profile.user_services.where(status: "pending").each do |user_service| %>
-    <%= link_to profile_user_service_path(@profile, user_service), class: "text-decoration-none" do %>
+    <%= link_to profile_user_service_path(@profile, user_service), class: "text-decoration-none", data: { turbo: false } do %>
       <div class="d-flex align-items-center mb-4 p-4 pb-5 rounded-4 shadow bg-white">
         <div>
           <h6 class="fw-semibold mb-1"><%= user_service.service.name %></h6>
