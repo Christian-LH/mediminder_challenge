@@ -1,6 +1,10 @@
 <%# Bootstrap container %>
 <div class="container py-4">
 
+  <div id="risk-loader" class="loader-overlay d-none">
+    <span class="loader"></span>
+  </div>
+
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h2 class="mb-0">Risk Assessor</h2>
     <%= link_to "Back to my services",
@@ -46,7 +50,8 @@
     <div class="card-body">
       <%= form_with url: new_profile_risk_assessor_path(@profile),
                     method: :get,
-                    local: true do |f| %>
+                    local: true,
+                    html: { data: { role: "risk-form" } } do |f| %>
 
         <%# Submit form to RiskAssessorsController#new (GET) %>
 

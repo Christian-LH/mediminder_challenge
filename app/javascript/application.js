@@ -15,3 +15,14 @@ document.addEventListener("turbo:load", () => {
     loader.classList.remove("d-none");
   });
 });
+
+document.addEventListener("turbo:load", () => {
+  const form   = document.querySelector('form[data-role="risk-form"]');
+  const loader = document.getElementById("risk-loader");
+
+  if (!form || !loader) return;
+
+  form.addEventListener("submit", () => {
+    loader.classList.remove("d-none");
+  });
+});
