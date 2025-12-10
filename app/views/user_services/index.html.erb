@@ -7,7 +7,7 @@
       <!-- User Info -->
       <div class="d-flex align-items-center">
 
-        <div class="d-flex align-items-center my-0 gap-3">
+        <div class="d-flex align-items-center m-2 gap-3">
           <% icon_class = @profile.icon.nil? ? @icons[rand(1..9)] : @icons[@profile.icon] %>
           <span class="btn btn-primary rounded-circle d-inline-flex justify-content-center align-items-center" style="width: 60px; height: 60px;">
             <i class="<%= icon_class %> fa-2x"></i>
