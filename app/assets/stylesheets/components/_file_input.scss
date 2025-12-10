@@ -1,0 +1,19 @@
+// Styles for file inputs used for vaccination upload
+.vaccination-file-input {
+  display: inline-block;
+  padding: 0.375rem 0.75rem;
+  border: 1px solid #ced4da; // matches Bootstrap input border
+  border-radius: 0.25rem;
+  background-color: #fff;
+  color: #212529;
+  cursor: pointer;
+}
+
+// Improve appearance of the button inside file inputs for WebKit browsers
+.vaccination-file-input::-webkit-file-upload-button {
+  -webkit-appearance: button;
+  padding: 0.375rem 0.75rem;
+  // margin-right: 0.2rem;
+  // border: none;
+  // background: transparent;
+}
