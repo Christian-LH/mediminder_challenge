@@ -1,7 +1,11 @@
 <div class="container my-4" style="position:relative;">
-  <%= link_to "⬅ Back",
-                      profile_user_services_path(@profile),
-                      class: "btn btn-outline-secondary btn-sm me-3 mb-4" %>
+
+  <%# new back button icon (because the one we have was showing differently on the phone) %>
+  <%= link_to profile_user_services_path(@profile), class: "text-decoration-none text-secondary link-dark" do %>
+    <i class="fa-solid fa-arrow-left"></i>
+    <p class="d-inline-block ms-2">Back</p>
+  <% end %>
+
   <div id="vaccination-loader" class="loader-overlay d-none">
     <span class="loader"></span>
   </div>
