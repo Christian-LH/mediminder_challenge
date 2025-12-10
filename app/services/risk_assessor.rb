@@ -13,17 +13,19 @@ class RiskAssessor
   #   - list of user_services
   #   - user message
   # 2. Then instantiate a new RiskAssessor with these arguments and run the `call` method.
-  def self.call(user:, profile:, user_services:, message:)
-    new(user, profile, user_services, message).call
+  def self.call(user:, profile:, user_services:, message:, return_to: nil)
+    new(user, profile, user_services, message, return_to).call
   end
 
   # store all dependenciesin instance variable.
-  def initialize(user, profile, user_services, message)
+  def initialize(user, profile, user_services, message, return_to = nil)
     @user          = user
     @profile       = profile
     @user_services = user_services
     @message       = message
+    @return_to     = return_to
   end
+
 
   # 1. Build a JSON context that contains:
   #    - age, gender, available services with id, name, category, and link path.
@@ -93,13 +95,21 @@ class RiskAssessor
   # 4. Convert hash into JSON so LLM can parse it.
   def build_context
     services_for_llm = @user_services.map do |us|
+      path =
+        if @return_to.present?                                         # NEW
+          profile_user_service_path(@profile, us, return_to: @return_to)
+        else
+          profile_user_service_path(@profile, us)
+        end
+
       {
         id:       us.id,
         name:     us.service.name,
         category: us.service.category,
-        path:     profile_user_service_path(@profile, us)
+        path:     path                                                 # CHANGED
       }
     end
+
 
 # 2/3 of full prompt: user info to send to the LLM.
 
@@ -114,7 +124,7 @@ class RiskAssessor
   end
 
   # Simple HTML fallback in case the LLM call fails
-  
+
     def build_fallback_html
       html = +"<h3>Unintended error</h3>"
 
@@ -157,7 +167,10 @@ class RiskAssessor
         <div class="mediminder-recommendation mb-4">
           <h4>Service name</h4>
           <p>One-sentence justification.</p>
-          <a href="/profiles/3/user_services/12" class="btn btn-light rounded-pill mb-3">View service</a>
+          <a href="/profiles/3/user_services/12"
+           class="btn btn-outline-primary btn-lg w-100 mb-3">
+            View service
+          </a>
         </div>
       - Use the exact `path` values from the context for the links; do NOT invent new URLs.
       - You MUST output exactly three recommendations.
