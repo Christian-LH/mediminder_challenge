@@ -28,7 +28,7 @@ class UserServicesController < ApplicationController
 
   def destroy
     @user_service.destroy
-    redirect_to profile_user_services_path(@profile), notice: "User service removed"
+    redirect_to profile_user_services_path(@profile)
   end
 
   private

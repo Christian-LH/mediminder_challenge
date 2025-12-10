@@ -13,7 +13,6 @@
             <i class="<%= icon_class %> fa-2x"></i>
           </span>
           <div class="d-flex flex-column">
-            <h6 class="text-primary lh-1">Profile of:</h6>
             <h3 class="fw-semibold mb-0 text-primary lh-1"><%= @profile.user_name %></h3>
           </div>
         </div>
@@ -21,31 +20,20 @@
       </div>
     </div>
 
-    <!-- SEARCH BAR -->
-      <form action="" method="get" class="mt-3 mb-4">
-        <div class="input-group rounded-pill shadow-sm bg-light px-3 py-2">
-          <span class="input-group-text bg-light border-0 p-0 me-2">
-            <i class="bi bi-search text-muted"></i>
-          </span>
-          <input
-            type="text"
-            name="query"
-            class="form-control border-0 bg-light"
-            placeholder="Search checkups..."
-            value="<%= params[:query] %>"
-          >
-        </div>
-      </form>
-
   <!-- ACTION BUTTONS -->
-  <div class="d-grid gap-2 d-md-flex justify-content-md-center mb-3">
+  <div class="d-grid gap-2 d-md-flex justify-content-md-center my-3">
     <%= link_to edit_profile_path(@profile), class: "btn btn-outline-primary btn-lg w-100 d-flex align-items-center justify-content-center rounded-5" do %>
-      <p class="mb-0 mx-3">Vaccination Checker</p><i class="fa-solid fa-passport"></i>
+      <i class="fa-solid fa-passport"></i><p class="mb-0 mx-3">Vaccination Checker</p>
     <% end %>
 
     <%= link_to new_profile_risk_assessor_path(@profile), class: "btn btn-outline-primary btn-lg w-100 w-md-auto flex-fill d-flex align-items-center justify-content-center rounded-5" do %>
-      <p class="mb-0 mx-3">Recommendations</p><i class="fa-solid fa-comment-medical"></i>
+      <i class="fa-solid fa-comment-medical"></i><p class="mb-0 mx-3">Recommendations</p>
     <% end %>
+  </div>
+
+  <!-- ALL SERVICES -->
+  <div class="d-flex flex-column justify-content-center align-items-center text-center my-2 mt-4">
+    <h1>Your Services</h1> <!-- Changed this to Services because there are not only checkups but also vaccinations, okay? -->
   </div>
 
   <!-- DONE SERVICES -->
@@ -53,24 +41,30 @@
   <% if done_count.positive? %>
     <% done_service = @user_services.where(status: "done").order(updated_at: :desc).first %>
     <%= link_to profile_user_service_path(@profile, done_service), class: "text-decoration-none", data: { turbo: false } do %>  <!-- link_to has to be linked to the archive in which every done service is shown (as an iteration) -->
-      <div class="d-flex align-items-center justify-content-center mb-3 p-3 rounded shadow-sm bg-success text-white">
-        <h6 class="my-2">Completed services:</h6>
-        <h5 class="my-2 mx-3"><strong><%= done_count %></strong></h5>
+      <div class="d-flex align-items-center mb-4 p-4 pb-5 rounded-4 shadow text-dark" style="background-color: rgba(var(--bs-success-rgb), 0.1); border: 1px solid rgba(var(--bs-success-rgb)); height: 120px;">
+        <div>
+          <h6 class="fw-semibold mb-1 text-dark lh-1">Completed services</h6>
+          <p class="mb-0 small text-secondary lh-1">
+            You have completed <strong class="lh-1 fs-5 text-dark"><%= done_count %></strong> services!
+          </p>
+        </div>
       </div>
     <% end %>
   <% else %>
-    <div class="d-flex align-items-center justify-content-center mb-3 p-3 rounded shadow-sm bg-light text-secondary">
-      <h6 class="my-2">Completed services:</h6>
-      <h5 class="my-2 mx-3"><strong>0</strong></h5>
+    <div class="d-flex align-items-center mb-4 p-4 pb-5 rounded-4 shadow bg-white text-secondary" style="height: 120px;">
+      <div>
+        <h6 class="fw-semibold mb-1 text-dark lh-1">Completed services</h6>
+        <p class="mb-0 small text-secondary lh-1">
+          You have completed <strong class="text-warning fs-5 lh-1">0</strong> services!
+        </p>
+      </div>
     </div>
   <% end %>
 
   <!-- PENDING SERVICES -->
-  <h4 class="text-muted mt-4 mb-3">Next checkups</h4>
-
   <% @profile.user_services.where(status: "pending").each do |user_service| %>
     <%= link_to profile_user_service_path(@profile, user_service), class: "text-decoration-none", data: { turbo: false } do %>
-      <div class="d-flex align-items-center mb-4 p-4 pb-5 rounded-4 shadow bg-white">
+      <div class="d-flex align-items-center mb-4 p-4 pb-5 rounded-4 shadow bg-white" style="height: 120px;">
         <div>
           <h6 class="fw-semibold mb-1"><%= user_service.service.name %></h6>
           <p class="mb-0 small text-secondary">
