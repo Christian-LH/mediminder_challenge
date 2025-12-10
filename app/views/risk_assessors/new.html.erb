@@ -11,7 +11,13 @@
     <!-- Header with back button -->
       <div class="d-flex align-items-center mb-4">
 
-        <a class="text-decoration-none text-secondary link-dark" href="/profiles/19/user_services">⬅ Back</a>
+      <div class="d-flex align-items-center mb-4">
+        <%= link_to profile_user_services_path(@profile),
+                    class: "text-decoration-none text-secondary link-dark me-3" do %>
+          <i class="fa-solid fa-arrow-left me-1"></i> Back
+        <% end %>
+      </div>
+
 
       </div>
 

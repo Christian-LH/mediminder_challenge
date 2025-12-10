@@ -12,9 +12,13 @@ Rails.application.routes.draw do
 
   # resources :users do
     resources :profiles, only: [:index, :show, :new, :create, :edit, :update] do
-      resources :user_services, only: [:index, :show, :edit, :update, :destroy]
+      resources :user_services, only: [:index, :show, :edit, :update, :destroy] do
+        member do
+          patch :mark_done
+          patch :mark_discard
+        end
+      end
 
       resource :risk_assessor, only: [:new, :create]
     end
-  # end
 end

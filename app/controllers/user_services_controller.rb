@@ -1,6 +1,6 @@
 class UserServicesController < ApplicationController
   before_action :set_profile
-  before_action :set_user_service, only: [:show, :edit, :update, :destroy]
+  before_action :set_user_service, only: [:show, :edit, :update, :destroy, :mark_done, :mark_discard]
 
   def index
     @user_services = @profile.user_services.includes(:service)
@@ -24,6 +24,34 @@ class UserServicesController < ApplicationController
   end
 
   def update
+  end
+
+  def mark_done
+    if @user_service.service.category == "vaccination"
+      @profile.mark_vaccinations_as_completed!([
+        {
+          name: @user_service.service.name,
+          date: Date.today,
+          description: "Confirmed manually"
+        }
+      ])
+    else
+      @user_service.update!(
+        status: "done",
+        completed_at: Date.today,
+        due_date: (@user_service.due_date || Date.today)
+      )
+    end
+
+    redirect_to profile_user_services_path(@profile),
+                notice: "Service marked as done."
+  end
+
+  def mark_discard
+    @user_service.update!(status: "discard")
+
+    redirect_to profile_user_services_path(@profile),
+                notice: "Service discarded."
   end
 
   def destroy
