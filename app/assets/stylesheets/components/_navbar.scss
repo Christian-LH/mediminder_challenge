@@ -1,6 +1,12 @@
 .navbar-lewagon {
   justify-content: space-between;
+  align-items: center;
   background: white;
+}
+
+.navbar-lewagon.fixed-top {
+  border-bottom: 1px solid #e0e0e0;
+  z-index: 1030;
 }
 
 .navbar-lewagon .navbar-collapse {
@@ -8,5 +14,12 @@
 }
 
 .navbar-lewagon .navbar-brand img {
-  width: 40px;
+  width: auto;
+  height: auto;
+  max-height: 52px;
+}
+
+// added so that the navbar does not cover content (because it floates now)
+body {
+  padding-top: 70px;
 }
