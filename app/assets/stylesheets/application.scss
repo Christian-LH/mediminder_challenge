@@ -11,3 +11,12 @@
 @import "components/index";
 @import "pages/index";
 @import "components/loader";
+
+.mediminder-recommendation {
+  background-color: rgba(var(--bs-primary-rgb), 0.1); /* hellblau */
+  border-radius: 1rem;                                 /* rounded-4 */
+  padding: 1.5rem;                                     /* p-4 */
+  box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);    /* shadow-sm */
+  margin-bottom: 1.5rem;                               /* mb-4 */
+  border: none;
+}

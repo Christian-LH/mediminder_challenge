@@ -8,9 +8,9 @@ class RiskAssessorsController < ApplicationController
   # constant question to show to user. HEREDOC formats it.
   QUESTION_PROMPT = <<~TEXT.freeze
     To tailor your preventive-care plan, please describe in your own words
-    • your occupation,
-    •  where you live,
-    •  typical travel patterns
+    💼 - your occupation,
+    🏡 - where you live,
+    🛫 - typical travel patterns
     and any other relevant health factors.
   TEXT
 
@@ -29,20 +29,23 @@ class RiskAssessorsController < ApplicationController
   # 4. If there is no message yet (first visit / empty form):
   #    - Set `@llm_response` to nil so the view knows not to show recommendations yet.
   def new
-    @question_prompt = QUESTION_PROMPT
-    user_message = params[:message]
-    # Call LLM only if user has submitted input
-    if user_message.present?
-      @llm_response = RiskAssessor.call(
-        user: current_user,
-        profile: @profile,
-        user_services: @user_services,
-        message: user_message
-      )
-    else
-      @llm_response = nil
-    end
+  @question_prompt = QUESTION_PROMPT
+  user_message = params[:message]
+
+  # Call LLM only if user has submitted input
+  if user_message.present?
+    @llm_response = RiskAssessor.call(
+      user:          current_user,
+      profile:       @profile,
+      user_services: @user_services,
+      message:       user_message,
+      return_to:     request.fullpath   # ← HINZUGEFÜGT
+    )
+  else
+    @llm_response = nil
   end
+end
+
 
   # `create` is broke, just keeping it for documentation
   def create
