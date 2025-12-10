@@ -1,7 +1,7 @@
-<div class="d-flex justify-content-center align-items-start min-vh-100 pt-5">
+<div class="d-flex justify-content-center align-items-start min-vh-100 p-4">
   <div class="w-100" style="max-width: 480px;">
 
-    <%= link_to "⬅ Back", profile_path(current_profile), class: "text-decoration-none text-secondary link-dark" %>
+    <%= link_to "⬅ Back", profile_user_services_path(current_profile), class: "text-decoration-none text-secondary link-dark" %>
 
     <!-- Greeting -->
     <div class="d-flex align-items-center my-4 gap-3">
@@ -16,9 +16,9 @@
 
     <!-- Add new profile button -->
     <div class="d-grid mb-4">
-      <%= link_to "+ Add a new profile",
-                  new_profile_path,
-                  class: "btn btn-outline-primary btn-lg py-3 rounded-5" %>
+      <%= link_to new_profile_path, class: "btn btn-outline-primary btn-lg py-3 rounded-5" do %>
+        <i class="fas fa-user-plus"></i> Add a new Profile
+      <% end %>
     </div>
 
     <!-- List of profiles -->

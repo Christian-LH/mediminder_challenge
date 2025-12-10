@@ -14,24 +14,81 @@
     <!-- Menu right side -->
     <div class="offcanvas offcanvas-end" tabindex="-1" id="rightMenu">
       <div class="offcanvas-header">
-        <h5 class="offcanvas-title">Menu</h5>
+        <% if current_user && current_profile %>
+          <div class="d-flex align-items-center mt-4 mb-2 gap-3">
+            <% icon_class = current_profile.icon.nil? ? @icons[rand(1..9)] : @icons[current_profile.icon] %>
+            <span class="btn btn-primary rounded-circle d-inline-flex justify-content-center align-items-center" style="width: 40px; height: 40px;">
+              <i class="<%= icon_class %>"></i>
+            </span>
+            <h3 class="fw-semibold mb-0 text-primary"><%= current_profile.user_name %></h3>
+          </div>
+        <% else %>
+          <h3>Menu</h3>
+        <% end %>
+
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
       </div>
 
       <div class="offcanvas-body">
         <ul class="navbar-nav">
 
-          <li class="nav-item">
+          <% if current_user %>
             <% if current_profile %>
-              <%= link_to "Profile", profile_path(current_profile), class: "nav-link" %>
-            <% else %>
-              <%= link_to "Create new profile", new_profile_path, class: "nav-link" %>
-            <% end %>
-          </li>
+              <li class="nav-item">
+                <%= link_to profile_user_services_path(current_profile), class: "nav-link" do %>
+                  <i class="fa-solid fa-clipboard-list fa-fw"></i> My Checkups
+                <% end %>
+              </li>
 
-          <li class="nav-item">
-            <%= link_to "Settings", root_path, class: "nav-link" %>
-          </li>
+              <li class="nav-item">
+                <%= link_to profile_user_services_path(current_profile), class: "nav-link" do %>
+                  <i class="fa-solid fa-list-check fa-fw"></i> My Checkup History
+                <% end %>
+              </li>
+
+              <li class="nav-item">
+                <%= link_to new_profile_path, class: "nav-link" do %>
+                  <i class="fas fa-user-plus fa-fw"></i> Add a new Profile
+                <% end %>
+              </li>
+
+              <li class="nav-item">
+                <%= link_to profiles_path, class: "nav-link" do %>
+                  <i class="fas fa-people-arrows fa-fw"></i> Change to another Profile
+                <% end %>
+              </li>
+
+              <li class="nav-item">
+                <%= link_to edit_profile_path(current_profile), class: "nav-link" do %>
+                  <i class="fa-solid fa-passport fa-fw"></i> Upload your Certificate of Vaccination
+                <% end %>
+              </li>
+
+              <li class="nav-item">
+                <%= link_to new_profile_risk_assessor_path(current_profile), class: "nav-link" do %>
+                  <i class="fa-solid fa-bolt fa-fw"></i> Recommendations
+                <% end %>
+              </li>
+            <% else %>
+              <li class="nav-item">
+                <%= link_to new_profile_path, class: "nav-link" do %>
+                  <i class="fas fa-user-plus fa-fw"></i> Add a new Profile
+                <% end %>
+              </li>
+            <% end %>
+          <% else %>
+            <li class="nav-item">
+              <%= link_to new_user_session_path, class: "nav-link" do %>
+                <i class="fa-solid fa-arrow-right-to-bracket fa-fw"></i> Log in
+              <% end %>
+            </li>
+
+            <li class="nav-item">
+              <%= link_to new_user_registration_path, class: "nav-link" do %>
+                <i class="fa-solid fa-user-plus fa-fw"></i> Sign up
+              <% end %>
+            </li>
+          <% end %>
 
         </ul>
       </div>
