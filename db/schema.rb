@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_12_09_094304) do
+ActiveRecord::Schema[7.1].define(version: 2025_12_10_094500) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -83,6 +83,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_12_09_094304) do
     t.integer "frequency_months"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "imported", default: false, null: false
+    t.index ["imported"], name: "index_services_on_imported"
   end
 
   create_table "user_services", force: :cascade do |t|

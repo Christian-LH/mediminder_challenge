@@ -24,7 +24,18 @@ class Profile < ApplicationRecord
 
       # create service if it doesn't exist (imported from vaccination pass)
       unless service
-        service = Service.create!(category: "vaccination", name: vacc[:name], description: (vacc[:description] || "Imported from vaccination pass"))
+        attrs = {
+          category: "vaccination",
+          name: vacc[:name],
+          description: (vacc[:description] || "Imported from vaccination pass")
+        }
+
+        # Only set the imported flag if the column exists (migration may not have been run yet)
+        if Service.column_names.include?("imported")
+          attrs[:imported] = true
+        end
+
+        service = Service.create!(attrs)
       end
 
       us = user_services.find_or_initialize_by(service: service)

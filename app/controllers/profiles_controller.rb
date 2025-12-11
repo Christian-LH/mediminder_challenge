@@ -112,9 +112,18 @@ class ProfilesController < ApplicationController
     return unless profile.present?
 
     Service.find_each do |service|
+      # Skip services that were imported from vaccination passes (only if the column exists)
+      next if Service.column_names.include?("imported") && service.imported?
+
       # gender restriction
-      if service.gender_restriction.present? && profile.gender.present? && service.gender_restriction != profile.gender  && service.gender_restriction != 'any'
-        next
+      if service.gender_restriction.present? && profile.gender.present?
+        # gender is stored with symbols (♂, ♀)
+        # Strip to make it only "male" and "female"
+        srv_gender = service.gender_restriction.to_s.downcase.gsub(/[^a-z]/, '')
+        prof_gender = profile.gender.to_s.downcase.gsub(/[^a-z]/, '')
+        if srv_gender != 'any' && srv_gender != prof_gender
+          next
+        end
       end
 
       # skip if profile already older than recommended_end_age
