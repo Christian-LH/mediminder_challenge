@@ -3,7 +3,8 @@ class UserServicesController < ApplicationController
   before_action :set_user_service, only: [:show, :edit, :update, :destroy, :mark_done, :mark_discard]
 
   def index
-    @user_services = @profile.user_services.includes(:service)
+    # Order pending services to show closest due dates on top
+    @user_services = @profile.user_services.includes(:service).ordered_for_index
     # @user_services = UserService.all
 
     # @user_age = current_user.profile.age
@@ -41,6 +42,18 @@ class UserServicesController < ApplicationController
         completed_at: Date.today,
         due_date: (@user_service.due_date || Date.today)
       )
+
+      # Recurring services are added back to the list with updated due date when marked done
+      freq = @user_service.service.frequency_months
+      if freq.present? && freq.to_i > 0
+        next_due = Date.today + freq.to_i.months
+        UserService.create!(
+          profile: @profile,
+          service: @user_service.service,
+          due_date: next_due,
+          status: "pending"
+        )
+      end
     end
 
     redirect_to profile_user_services_path(@profile),
