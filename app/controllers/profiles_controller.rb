@@ -48,6 +48,96 @@ class ProfilesController < ApplicationController
       gender_restriction: "any",
       recommended_start_age: 60,
       frequency_months: 12
+    },
+
+    {
+      name: "Rotavirus Vaccination",
+      description: "Oral vaccine series in early infancy to prevent severe rotavirus gastroenteritis. Starts from 6 weeks of age and is completed within the first 6 months of life.",
+      category: "vaccination",
+      gender_restriction: "any",
+      recommended_start_age: 0,
+      recommended_end_age: 1,
+      frequency_months: nil
+    },
+    {
+      name: "Hib Vaccination (Haemophilus influenzae Typ b)",
+      description: "Standard childhood vaccination (often in combination vaccines) to prevent invasive Hib infections such as meningitis and epiglottitis.",
+      category: "vaccination",
+      gender_restriction: "any",
+      recommended_start_age: 0,
+      recommended_end_age: 5,
+      frequency_months: nil
+    },
+    {
+      name: "Polio Vaccination (Poliomyelitis)",
+      description: "Basic immunisation in infancy plus one booster in adolescence. Adults should ensure complete basic immunisation; further boosters for travellers and risk groups.",
+      category: "vaccination",
+      gender_restriction: "any",
+      recommended_start_age: 0,
+      recommended_end_age: 16,
+      frequency_months: nil
+    },
+    {
+      name: "Hepatitis B Vaccination",
+      description: "Usually given as part of combination vaccines in infancy. Unvaccinated children, adolescents and risk groups should receive a 3-dose series.",
+      category: "vaccination",
+      gender_restriction: "any",
+      recommended_start_age: 0,
+      recommended_end_age: 18,
+      frequency_months: nil
+    },
+    {
+      name: "Meningococcal B Vaccination",
+      description: "Protection against meningococcal group B meningitis and sepsis. Standard series in infancy according to the vaccine’s schedule.",
+      category: "vaccination",
+      gender_restriction: "any",
+      recommended_start_age: 0,
+      recommended_end_age: 2,
+      frequency_months: nil
+    },
+    {
+      name: "Meningococcal C Vaccination",
+      description: "Single vaccination in childhood or adolescence to prevent meningococcal C meningitis. Catch-up recommended up to late adolescence if not previously vaccinated.",
+      category: "vaccination",
+      gender_restriction: "any",
+      recommended_start_age: 1,
+      recommended_end_age: 17,
+      frequency_months: nil
+    },
+    {
+      name: "HPV Vaccination (Human Papillomavirus)",
+      description: "2-dose series for girls and boys aged 9–14 years (catch-up up to 17) to prevent HPV-related cancers and genital warts.",
+      category: "vaccination",
+      gender_restriction: "any",
+      recommended_start_age: 9,
+      recommended_end_age: 17,
+      frequency_months: nil
+    },
+    {
+      name: "Varicella Vaccination (Chickenpox)",
+      description: "Two-dose vaccination for children and susceptible adolescents to prevent varicella and its complications.",
+      category: "vaccination",
+      gender_restriction: "any",
+      recommended_start_age: 1,
+      recommended_end_age: 17,
+      frequency_months: nil
+    },
+    {
+      name: "RSV Immunisation (Infants, monoclonal antibody)",
+      description: "Single dose of a monoclonal antibody against RSV before or during the first RSV season to prevent severe lower respiratory tract infections in infants.",
+      category: "vaccination",
+      gender_restriction: "any",
+      recommended_start_age: 0,
+      recommended_end_age: 1,
+      frequency_months: nil
+    },
+    {
+      name: "RSV Vaccination (Older Adults)",
+      description: "One-time vaccination with a protein-based RSV vaccine for adults (standard recommendation from age 60) before the RSV season to prevent severe RSV disease.",
+      category: "vaccination",
+      gender_restriction: "any",
+      recommended_start_age: 60,
+      frequency_months: nil
     }
   ]
   before_action :set_profile, only: [:show, :edit, :update]
