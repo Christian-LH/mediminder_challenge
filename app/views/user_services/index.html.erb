@@ -40,7 +40,7 @@
   <% done_count = @user_services.where(status: "done").count %>
   <% if done_count.positive? %>
     <% done_service = @user_services.where(status: "done").order(updated_at: :desc).first %>
-    <%= link_to profile_user_service_path(@profile, done_service), class: "text-decoration-none", data: { turbo: false } do %>  <!-- link_to has to be linked to the archive in which every done service is shown (as an iteration) -->
+    <%= link_to history_profile_user_services_path(@profile), class: "text-decoration-none", data: { turbo: false } do %>  <!-- link_to has to be linked to the archive in which every done service is shown (as an iteration) -->
       <div class="d-flex align-items-center mb-4 p-4 pb-5 rounded-4 shadow text-dark" style="background-color: rgba(var(--bs-success-rgb), 0.1); border: 1px solid rgba(var(--bs-success-rgb)); height: 120px;">
         <div>
           <h6 class="fw-semibold mb-1 text-dark lh-1">Completed services</h6>

@@ -1,0 +1,46 @@
+<div class="container py-4">
+
+  <!-- HEADER -->
+  <div class="mb-4">
+    <%= link_to profile_user_services_path(@profile), class: "text-decoration-none text-secondary link-dark" do %>
+      <i class="fa-solid fa-arrow-left me-1"></i> Back
+    <% end %>
+
+    <div class="d-flex justify-content-between align-items-center my-4">
+      <!-- User Info -->
+      <div class="d-flex align-items-center">
+
+        <div class="d-flex align-items-center m-2 gap-3">
+          <% icon_class = @profile.icon.nil? ? @icons[rand(1..9)] : @icons[@profile.icon] %>
+          <span class="btn btn-primary rounded-circle d-inline-flex justify-content-center align-items-center" style="width: 60px; height: 60px;">
+            <i class="<%= icon_class %> fa-2x"></i>
+          </span>
+          <div class="d-flex flex-column">
+            <h3 class="fw-semibold mb-0 text-primary lh-1"><%= @profile.user_name %></h3>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  <!-- ALL COMPLETED SERVICES -->
+  <div class="d-flex flex-column justify-content-center align-items-center text-center my-2 mt-4">
+    <h1>Your completed Services</h1>
+  </div>
+
+  <!-- PENDING SERVICES -->
+  <% @user_services.each do |user_service| %>
+    <%= link_to profile_user_service_path(@profile, user_service), class: "text-decoration-none", data: { turbo: false } do %>
+      <div class="d-flex align-items-center mb-4 p-4 pb-5 rounded-4 shadow text-dark" style="background-color: rgba(var(--bs-success-rgb), 0.1); border: 1px solid rgba(var(--bs-success-rgb)); height: 120px;">
+        <div>
+          <h6 class="fw-semibold mb-1"><%= user_service.service.name %></h6>
+          <p class="mb-0 small text-secondary">
+            Completed on <%= user_service.completed_at %>.
+          </p>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+
+
+</div>

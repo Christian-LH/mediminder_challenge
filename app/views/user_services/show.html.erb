@@ -5,7 +5,7 @@
       <!-- Header with back button -->
         <div class="d-flex align-items-center mb-4">
 
-          <a class="text-decoration-none text-secondary link-dark"
+          <a class="text-decoration-none text-secondary link-dark mt-2"
             href="<%= params[:return_to].presence || profile_user_services_path(@profile) %>"
             onclick="event.preventDefault(); window.history.back();">
             <i class="fa-solid fa-arrow-left me-1"></i> Back
@@ -46,27 +46,28 @@
           </dl>
 
           <!-- Action buttons -->
-          <div class="d-flex flex-column gap-2 mt-3">
+          <% if @user_service.status == "pending" %>
+            <div class="d-flex flex-column gap-2 mt-3">
+              <% if doctolib_url_for(@user_service.service.name) %>
+                <%= link_to "Find a Doctor on Doctolib",
+                            doctolib_url_for(@user_service.service.name),
+                            class: "btn btn-outline-primary btn-lg w-100",
+                            target: "_blank",
+                            rel: "noopener" %>
+              <% end %>
 
-            <% if doctolib_url_for(@user_service.service.name) %>
-              <%= link_to "Find a Doctor on Doctolib",
-                          doctolib_url_for(@user_service.service.name),
-                          class: "btn btn-outline-primary btn-lg w-100",
-                          target: "_blank",
-                          rel: "noopener" %>
-            <% end %>
+              <%= button_to "I already went",
+                        mark_done_profile_user_service_path(@profile, @user_service),
+                        method: :patch,
+                        class: "btn btn-success btn-lg w-100" %>
 
-            <%= button_to "I already went",
-                      mark_done_profile_user_service_path(@profile, @user_service),
-                      method: :patch,
-                      class: "btn btn-success btn-lg w-100" %>
+              <%= button_to "I will not go",
+                        mark_discard_profile_user_service_path(@profile, @user_service),
+                        method: :patch,
+                        class: "btn btn-secondary btn-lg w-100" %>
 
-            <%= button_to "I will not go",
-                      mark_discard_profile_user_service_path(@profile, @user_service),
-                      method: :patch,
-                      class: "btn btn-secondary btn-lg w-100" %>
-
-          </div>
+            </div>
+          <% end %>
 
 
         </div>

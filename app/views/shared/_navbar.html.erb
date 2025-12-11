@@ -36,13 +36,13 @@
             <% if current_profile %>
               <li class="nav-item">
                 <%= link_to profile_user_services_path(current_profile), class: "nav-link" do %>
-                  <i class="fa-solid fa-clipboard-list fa-fw"></i> My Checkups
+                  <i class="fa-solid fa-clipboard-list fa-fw"></i> My Services
                 <% end %>
               </li>
 
               <li class="nav-item">
-                <%= link_to profile_user_services_path(current_profile), class: "nav-link" do %>
-                  <i class="fa-solid fa-list-check fa-fw"></i> My Checkup History
+                <%= link_to history_profile_user_services_path(current_profile), class: "nav-link" do %>
+                  <i class="fa-solid fa-list-check fa-fw"></i> My Service History
                 <% end %>
               </li>
 
@@ -60,13 +60,13 @@
 
               <li class="nav-item">
                 <%= link_to edit_profile_path(current_profile), class: "nav-link" do %>
-                  <i class="fa-solid fa-passport fa-fw"></i> Upload your Certificate of Vaccination
+                  <i class="fa-solid fa-passport fa-fw"></i> Vaccination Checker
                 <% end %>
               </li>
 
               <li class="nav-item">
                 <%= link_to new_profile_risk_assessor_path(current_profile), class: "nav-link" do %>
-                  <i class="fa-solid fa-bolt fa-fw"></i> Recommendations
+                  <i class="fa-solid fa-comment-medical fa-fw"></i> Recommendations
                 <% end %>
               </li>
             <% else %>

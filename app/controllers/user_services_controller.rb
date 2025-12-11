@@ -54,6 +54,10 @@ class UserServicesController < ApplicationController
                 notice: "Service discarded."
   end
 
+  def history
+    @user_services = @profile.user_services.where(status: "done")
+  end
+
   def destroy
     @user_service.destroy
     redirect_to profile_user_services_path(@profile)
