@@ -3,7 +3,8 @@ class UserServicesController < ApplicationController
   before_action :set_user_service, only: [:show, :edit, :update, :destroy, :mark_done, :mark_discard]
 
   def index
-    @user_services = @profile.user_services.includes(:service)
+    # Order pending services to show closest due dates on top
+    @user_services = @profile.user_services.includes(:service).ordered_for_index
     # @user_services = UserService.all
 
     # @user_age = current_user.profile.age
