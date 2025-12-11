@@ -17,10 +17,12 @@
         <% if current_user && current_profile %>
           <div class="d-flex align-items-center mt-4 mb-2 gap-3">
             <% icon_class = current_profile.icon.nil? ? @icons[rand(1..9)] : @icons[current_profile.icon] %>
-            <span class="btn btn-primary rounded-circle d-inline-flex justify-content-center align-items-center" style="width: 40px; height: 40px;">
+            <%= link_to profile_user_services_path(current_profile), class: "btn btn-primary rounded-circle d-inline-flex justify-content-center align-items-center", style: "width: 40px; height: 40px;" do %>
               <i class="<%= icon_class %>"></i>
-            </span>
-            <h3 class="fw-semibold mb-0 text-primary"><%= current_profile.user_name %></h3>
+            <% end %>
+            <%= link_to profile_user_services_path(current_profile), class: "text-decoration-none" do %>
+              <h3 class="fw-semibold mb-0"><%= current_profile.user_name %></h3>
+            <% end %>
           </div>
         <% else %>
           <h3>Menu</h3>

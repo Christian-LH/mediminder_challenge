@@ -9,11 +9,19 @@
 
         <div class="d-flex align-items-center m-2 gap-3">
           <% icon_class = @profile.icon.nil? ? @icons[rand(1..9)] : @icons[@profile.icon] %>
-          <span class="btn btn-primary rounded-circle d-inline-flex justify-content-center align-items-center" style="width: 60px; height: 60px;">
+          <span role="button"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#rightMenu"
+                class="btn btn-primary rounded-circle d-inline-flex justify-content-center align-items-center"
+                style="width: 60px; height: 60px; cursor: pointer;">
             <i class="<%= icon_class %> fa-2x"></i>
           </span>
           <div class="d-flex flex-column">
+            <span role="button"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#rightMenu">
             <h3 class="fw-semibold mb-0 text-primary lh-1"><%= @profile.user_name %></h3>
+          </span>
           </div>
         </div>
 
