@@ -68,7 +68,7 @@ class UserServicesController < ApplicationController
   end
 
   def history
-    @user_services = @profile.user_services.where(status: "done")
+    @user_services = @profile.user_services.where(status: "done").ordered_for_history
   end
 
   def destroy

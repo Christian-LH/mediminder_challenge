@@ -4,6 +4,11 @@ class UserService < ApplicationRecord
 
   # Order the pending services by due date ascending
   scope :ordered_for_index, -> {
-    order(Arel.sql("CASE WHEN status = 'pending' THEN 0 ELSE 1 END, COALESCE(due_date, '9999-12-31') ASC"))
+    order(due_date: :asc)
+  }
+
+  # Order the done services by completed date descending
+  scope :ordered_for_history, -> {
+    order(completed_at: :desc)
   }
 end
