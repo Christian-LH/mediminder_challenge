@@ -21,8 +21,8 @@
     <%= simple_form_for @profile do |f| %>
 
       <!-- Step 1 - Gender pick -->
-      <div data-multi-step-target="genderStep" class="text-center">
-        <h4 class="mt-4 mb-1">Choose your gender</h4>
+      <div data-multi-step-target="genderStep" class="text-center mb-2">
+        <h4 class="fw-bold mb-4">Choose your gender</h4>
 
         <div class="row g-3 justify-content-center">
           <% ["♂ Male", "♀ Female"].each_with_index do |gender, index| %>
@@ -39,6 +39,12 @@
                 data-action="click->multi-step#nextStep">
           Next
         </button>
+          <p class="text-muted small mt-3">
+            MediMinder is designed to be privacy-friendly, so we collect only what is medically necessary.
+            German preventive-care guidelines use biological sex for specific recommendations, and they
+            provide only “male” and “female” categories (e.g., cervical cancer screening, prostate screening). For that reason, we ask only these two options and do not collect data on
+            diverse identities or sexuality.
+          </p>
       </div>
 
       <!-- Step 2 - Birthdate pick -->
