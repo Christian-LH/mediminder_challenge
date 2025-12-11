@@ -42,6 +42,18 @@ class UserServicesController < ApplicationController
         completed_at: Date.today,
         due_date: (@user_service.due_date || Date.today)
       )
+
+      # Recurring services are added back to the list with updated due date when marked done
+      freq = @user_service.service.frequency_months
+      if freq.present? && freq.to_i > 0
+        next_due = Date.today + freq.to_i.months
+        UserService.create!(
+          profile: @profile,
+          service: @user_service.service,
+          due_date: next_due,
+          status: "pending"
+        )
+      end
     end
 
     redirect_to profile_user_services_path(@profile),
